@@ -1,0 +1,26 @@
+# Example config file. 
+# Most parameters have a default that is set in config.h
+
+[IO]
+input_path = "input/"
+output_path = "output/"
+dataset = "Poppelsdorf"
+# error_log_file = "error.log"
+# generate_plots = false
+
+[PolygonPruning]
+# collinearity_threshold = 2.0
+# absolute_covertex_threshold = 0.01
+# bbox_relative_covertex_threshold = 0.001
+
+[PolygonPerturbation]
+# master_seed = 42
+# default_perturbation_factor = 1e-5
+
+[MedialAxisPruning]
+# collinearity_threshold = 10.0
+# absolute_covertex_threshold = 0.01
+# bbox_relative_covertex_threshold = 0.005
+
+[MedialAxis]
+use_parabolas = true
