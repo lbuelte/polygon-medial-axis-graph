@@ -71,7 +71,11 @@ Testing/
 .vscode/
 .idea/
 
-# Data
+# Data and results (only the small example inputs are committed)
 input/
+output/
+*.gpkg
+!examples/data/*/*.gpkg
+*.svg
 
 CLAUDE.md
