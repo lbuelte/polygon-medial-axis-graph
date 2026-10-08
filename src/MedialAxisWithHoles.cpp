@@ -2,57 +2,11 @@
 
 #include "MedialAxisWithHoles.h"
 
+#include "geometry_utils.h"
 #include "io/logger.h"
 
 #include <cassert>
 #include <utility>
-
-
-namespace {
-
-    // Helper to check if prev - curr - next has a nearly collinear angle
-    bool is_nearly_collinear_by_angle(
-        const Point_2& prev,
-        const Point_2& curr,
-        const Point_2& next,
-        double degree_offset)
-    {
-        Vector_2 v1 = prev - curr;
-        Vector_2 v2 = next - curr;
-
-        double len1 = std::sqrt(CGAL::to_double(v1.squared_length()));
-        double len2 = std::sqrt(CGAL::to_double(v2.squared_length()));
-
-        if (len1 == 0.0 || len2 == 0.0)
-            return false;
-
-        double dot = CGAL::to_double(v1 * v2);
-        double cos_angle = dot / (len1 * len2);
-
-        cos_angle = std::max(-1.0, std::min(1.0, cos_angle));
-
-        double angle_deg = std::acos(cos_angle) * 180.0 / M_PI;
-
-        return std::abs(angle_deg - 180.0) <= degree_offset;
-    }
-
-    // Helper to check if prev - curr - next is a reflex vertex or almost collinear
-    bool is_reflex_vertex(
-        const Point_2 &prev,
-        const Point_2 &curr,
-        const Point_2 &next)
-    {
-        const double degree_offset = 2.0;
-
-        if (is_nearly_collinear_by_angle(prev, curr, next, degree_offset))
-            return true;
-
-        CGAL::Orientation o = CGAL::orientation(prev, curr, next);
-
-        return o == CGAL::RIGHT_TURN;
-    }
-
-} // end of anonymous namespace
 
 
 void MedialAxisWithHoles::create_medial_axis(Config const &config) 
