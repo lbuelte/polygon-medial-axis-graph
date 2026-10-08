@@ -1,10 +1,19 @@
 #!/bin/bash
 # watchdog.sh - Run C++ program with per-instance timeout detection
+#
+# Usage (from the repository root):
+#   scripts/watchdog.sh [config.toml] [timeout_seconds]
+#
+# Instances that time out or segfault are appended to the stuck/segfault
+# instance lists. On restart, the program perturbs these instances before
+# computing their medial axis. The list paths must match the
+# stuck_instances_file / segfault_instances_file keys in the config.
 
-EXECUTABLE="build/release/MedialAxisWithHoles"
+EXECUTABLE="${EXECUTABLE:-build/MedialAxisWithHoles}"
+CONFIG_FILE="${1:-config.toml}"
 TIMEOUT_SECONDS="${2:-10}"
-STUCK_INSTANCES_FILE="stuck_instances.txt"
-SEGFAULT_INSTANCES_FILE="segfault_instances.txt"
+STUCK_INSTANCES_FILE="scripts/stuck_instances.txt"
+SEGFAULT_INSTANCES_FILE="scripts/segfault_instances.txt"
 LOG_FILE="watchdog.log"
 PROGRESS_FILE="last_progress.tmp"  # Your C++ program writes "DATASET INSTANCE_ID" here
 
@@ -22,7 +31,7 @@ while true; do
     echo "" > "$PROGRESS_FILE"
 
     # Launch the C++ program in background
-    ./$EXECUTABLE &
+    ./$EXECUTABLE "$CONFIG_FILE" &
     CHILD_PID=$!
 
     STUCK=false

@@ -6,6 +6,12 @@
 #include "io/config.h"
 
 #include <filesystem>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <optional>
+#include <set>
+#include <string>
 
 namespace{
 
@@ -23,14 +29,19 @@ std::map<std::string, std::set<int>> load_faulty_instances(const std::string& pa
 } // end of anonymous namespace
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
-    const Config config = load_config("config.toml");
+    if (argc > 2) {
+        std::cerr << "Usage: " << argv[0] << " [config.toml]" << std::endl;
+        return 1;
+    }
+    const std::string config_file = (argc == 2) ? argv[1] : "config.toml";
+    const Config config = load_config(config_file);
 
-    // load instances where CGAl gets stuck or runs into a segfault. 
+    // load instances where CGAl gets stuck or runs into a segfault.
     // Later, these will be perturbed before run.
-    auto stuck_instances = load_faulty_instances("stuck_instances.txt");
-    auto segfault_instances = load_faulty_instances("segfault_instances.txt");
+    auto stuck_instances = load_faulty_instances(config.io.stuck_instances_file);
+    auto segfault_instances = load_faulty_instances(config.io.segfault_instances_file);
 
     std::filesystem::path global_input_path = config.io.input_path;
 

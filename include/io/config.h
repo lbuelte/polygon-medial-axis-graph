@@ -13,6 +13,10 @@ struct IOConfig {
     std::optional<std::string> dataset = std::nullopt;
     std::optional<std::string> error_log_file = std::nullopt;
     bool generate_plots = true;
+    // Instances (dataset name + index) that are perturbed before the medial axis is computed,
+    // because CGAL got stuck or crashed on them (see scripts/watchdog.sh)
+    std::string stuck_instances_file = "scripts/stuck_instances.txt";
+    std::string segfault_instances_file = "scripts/segfault_instances.txt";
 };
 
 struct PolygonPruningConfig {

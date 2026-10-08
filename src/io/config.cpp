@@ -79,6 +79,8 @@ Config load_config(const std::string& filename)
     read_optional_if(*io_tbl, "dataset", cfg.io.dataset);
     read_optional_if(*io_tbl, "error_log_file", cfg.io.error_log_file);
     read_value_if(*io_tbl, "generate_plots", cfg.io.generate_plots);
+    read_value_if(*io_tbl, "stuck_instances_file", cfg.io.stuck_instances_file);
+    read_value_if(*io_tbl, "segfault_instances_file", cfg.io.segfault_instances_file);
 
 
     // =========================
@@ -155,6 +157,8 @@ void log_config(const Config& cfg, std::ostream& out)
         << (cfg.io.dataset.has_value() ?  *cfg.io.dataset : "all") 
         << "\n";
     out << "generate_plots = " << tf(cfg.io.generate_plots) << "\n";
+    out << "stuck_instances_file = " << cfg.io.stuck_instances_file << "\n";
+    out << "segfault_instances_file = " << cfg.io.segfault_instances_file << "\n";
 
     out << "error_log_file = ";
     if (cfg.io.error_log_file)
