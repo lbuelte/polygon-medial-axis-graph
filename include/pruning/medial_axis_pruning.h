@@ -1,7 +1,10 @@
 // Created by Laura Bülte on 2026-03-20.
 
+#ifndef MEDIALAXISWITHHOLES_MEDIAL_AXIS_PRUNING_H
+#define MEDIALAXISWITHHOLES_MEDIAL_AXIS_PRUNING_H
+
 #include "MedialAxisWithHoles.h"
-#include "../io/config.h"
+#include "io/config.h"
 
 // ---------- sanity checks for medial axis --------------
 
@@ -21,3 +24,5 @@ void contract_adjacent_covertices_from_medial_axis(MedialAxisWithHoles &ma, doub
 void prune_collinear_vertices_from_medial_axis(MedialAxisWithHoles &ma, double degree_offset);
 
 void prune_medial_axis(MedialAxisWithHoles &ma, MedialAxisPruningConfig const &config);
+
+#endif // MEDIALAXISWITHHOLES_MEDIAL_AXIS_PRUNING_H

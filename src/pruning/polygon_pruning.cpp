@@ -5,6 +5,8 @@
 #include "geometry_utils.h"
 #include "io/logger.h"
 
+#include <cassert>
+#include <iostream>
 #include <random>
 
 

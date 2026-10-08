@@ -9,6 +9,11 @@
 #include "io/config.h"
 #include "json/json.hpp"
 
+#include <fstream>
+#include <iostream>
+#include <set>
+#include <string>
+#include <utility>
 #include <vector>
 
 class MedialAxisWithHoles {

@@ -5,7 +5,12 @@
 #include "geometry_utils.h"
 #include "io/logger.h"
 
+#include <algorithm>
 #include <cassert>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <set>
 #include <utility>
 
 

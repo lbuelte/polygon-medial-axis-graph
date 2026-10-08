@@ -5,6 +5,11 @@
 #include "geometry_utils.h"
 #include "io/logger.h"
 
+#include <iostream>
+#include <set>
+#include <stack>
+#include <unordered_map>
+
 
 bool is_connected(MedialAxisWithHoles const &ma)
 {

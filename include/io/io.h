@@ -1,11 +1,11 @@
 #ifndef MEDIALAXISWITHHOLES_IO_H
 #define MEDIALAXISWITHHOLES_IO_H
 
-#include "MedialAxisWithHoles.h"
+#include "CGAL_includes.h"
 
-#include <ogrsf_frmts.h>
-#include <cmath>
-#include <limits>
+#include <filesystem>
+#include <string>
+#include <vector>
 
 // ----------------------------------------------------------------------
 // Reads polygons with holes from a GeoPackage (.gpkg) file and stores
