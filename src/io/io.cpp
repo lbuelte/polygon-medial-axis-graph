@@ -2,8 +2,10 @@
 
 #include <ogrsf_frmts.h>
 #include <cmath>
+#include <iostream>
 #include <limits>
 #include <stdexcept>
+#include <string>
 
 void read_gpkg_to_polygons_with_holes(
         const std::filesystem::path &filepath,
@@ -98,20 +100,31 @@ void read_gpkg_to_polygons_with_holes(
         return std::round(v * 1000.0) / 1000.0; // round to millimeters
     };
 
-    int min_shape_id = std::numeric_limits<int>::infinity();
-
     while ((feature = layer->GetNextFeature()) != nullptr) {
         OGRGeometry *geom = feature->GetGeometryRef();
         if (!geom) { 
             OGRFeature::DestroyFeature(feature); 
             continue; 
         }
+        // Read ID if exists, else fallback to FID
+        int shape_id = static_cast<int>(feature->GetFID());
+        if (idFieldIndex >= 0) {
+            shape_id = feature->GetFieldAsInteger(idFieldIndex);
+        }
+
         OGRwkbGeometryType geomType = wkbFlatten(geom->getGeometryType());
         std::vector<OGRPolygon*> ogrPolygons;
         if (geomType == wkbPolygon) {
             ogrPolygons.push_back(geom->toPolygon());
         } else if (geomType == wkbMultiPolygon) {
             OGRMultiPolygon *multi = geom->toMultiPolygon();
+            // Skip features with several parts, since all parts would get the same id
+            if (multi->getNumGeometries() > 1) {
+                std::cerr << "Warning: skipping feature with id " << shape_id
+                          << " (MultiPolygon with " << multi->getNumGeometries() << " parts)" << std::endl;
+                OGRFeature::DestroyFeature(feature);
+                continue;
+            }
             for (int i = 0; i < multi->getNumGeometries(); ++i) {
                 ogrPolygons.push_back(multi->getGeometryRef(i)->toPolygon());
             }
@@ -151,26 +164,26 @@ void read_gpkg_to_polygons_with_holes(
             return true;
         };
 
-        bool valid_polyogn = true;
         for (OGRPolygon *ogrPoly : ogrPolygons) {
             if (!ogrPoly) { 
                 continue; 
             }
 
-            // Read ID if exists, else fallback to FID
-            int shape_id = static_cast<int>(feature->GetFID());
-            if (idFieldIndex >= 0) {
-                shape_id = feature->GetFieldAsInteger(idFieldIndex);
-            }
-            shape_ids.push_back(shape_id);
+            // Helper to report polygons that are skipped
+            auto warn_skip = [&](const std::string &reason){
+                std::cerr << "Warning: skipping polygon with id " << shape_id
+                          << " (" << reason << ")" << std::endl;
+            };
 
             // Exterior ring
             OGRLinearRing *exterior = ogrPoly->getExteriorRing();
             if (!exterior) {
+                warn_skip("no exterior ring");
                 continue;
             }
             Polygon outer;
             if (not get_nondegenerate_polygon(exterior, outer)){
+                warn_skip("degenerate exterior ring");
                 continue;
             }
             if (!outer.is_counterclockwise_oriented()) {
@@ -193,12 +206,16 @@ void read_gpkg_to_polygons_with_holes(
                 holes.push_back(hole);
             }
             if (not all_holes_are_valid){
+                warn_skip("degenerate hole");
                 continue;
             }
 
+            // Store the id only together with its polygon, so that ids and polygons stay aligned
+            shape_ids.push_back(shape_id);
             polygons.emplace_back(outer, holes.begin(), holes.end());
-            OGRFeature::DestroyFeature(feature);
         }
+        // The polygons point into the feature's geometry, so destroy it only after the loop
+        OGRFeature::DestroyFeature(feature);
     }
 
     GDALClose(poDS);

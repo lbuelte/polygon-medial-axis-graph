@@ -19,5 +19,6 @@ void clear_log_context();
 
 
 void log_error(std::ostream &stream, const std::string& message);
+void log_warning(std::ostream &stream, const std::string& message);
 
 #endif // MEDIALAXISWITHHOLES_LOGGER_H

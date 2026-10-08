@@ -412,6 +412,7 @@ void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas)
 
     std::map<Vertex_handle,int> index;
     std::set<Vertex_handle> used;
+    std::vector<Halfedge_handle> medial_axis_edges;
 
     // select valid edges
     for (auto eit = vd.edges_begin();
@@ -435,6 +436,7 @@ void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas)
 
         used.insert(h->source());
         used.insert(h->target());
+        medial_axis_edges.push_back(h);
     }
 
     // build vertex array
@@ -443,16 +445,8 @@ void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas)
         vertices.push_back(vh->point());
     }
 
-    for (auto eit = vd.edges_begin(); eit != vd.edges_end(); ++eit) {
-        Halfedge_handle h = eit;
-
-        // skip infinite edges
-        if (!h->has_source() || !h->has_target())
-            continue;
-
-        // skip edges ending at unused vertices (e.g., reflex / outside)
-        if (!used.count(h->source()) || !used.count(h->target()))
-            continue;
+    // build edges from the selected Voronoi edges only
+    for (Halfedge_handle h : medial_axis_edges) {
 
         // map vertex handles to compact indices
         int i1 = index[h->source()];

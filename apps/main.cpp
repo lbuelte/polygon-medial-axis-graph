@@ -4,6 +4,7 @@
 #include "io/logger.h"
 #include "io/io.h"
 #include "io/config.h"
+#include "pruning/polygon_pruning.h"
 
 #include <filesystem>
 #include <fstream>
@@ -89,14 +90,23 @@ int main(int argc, char *argv[]) {
                 return std::optional<std::string>(std::nullopt);
             }();
 
-            if (stuck_instances_dataset.count(i)){
-                graph_json = run_medial_axis_with_holes(config, *pwh, shape_ids[i], svg_string, true);
-            } 
-            else if (segfault_instances_dataset.count(i)){
-                graph_json = run_medial_axis_with_holes(config, *pwh, shape_ids[i], svg_string, true);
-            }        
-            else {
-                graph_json = run_medial_axis_with_holes(config, *pwh, shape_ids[i], svg_string);
+            try {
+                if (stuck_instances_dataset.count(i)){
+                    graph_json = run_medial_axis_with_holes(config, *pwh, shape_ids[i], svg_string, true);
+                }
+                else if (segfault_instances_dataset.count(i)){
+                    graph_json = run_medial_axis_with_holes(config, *pwh, shape_ids[i], svg_string, true);
+                }
+                else {
+                    graph_json = run_medial_axis_with_holes(config, *pwh, shape_ids[i], svg_string);
+                }
+            }
+            // Skip polygons that cannot be made valid, they get no entry in the output
+            catch (InvalidPolygonError const &e) {
+                std::cerr << "Warning: skipping instance " << dataset << "|" << i
+                          << " (id " << shape_ids[i] << "): " << e.what() << std::endl;
+                clear_log_context();
+                continue;
             }
             all_graphs["graphs"].push_back(graph_json);
             clear_log_context();

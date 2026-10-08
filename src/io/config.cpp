@@ -134,7 +134,7 @@ Config load_config(const std::string& filename)
     // Medial Axis
     // =========================
     const auto* ma_tbl = tbl["MedialAxis"].as_table();
-    if (!map_tbl)
+    if (!ma_tbl)
         throw std::runtime_error("Missing [MedialAxis] section");
 
     read_value_if(*ma_tbl, "use_parabolas",

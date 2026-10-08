@@ -6,9 +6,18 @@
 #include "CGAL_includes.h"
 #include "io/config.h"
 
+#include <stdexcept>
+#include <string>
+
+    // Thrown if no valid polygon can be obtained by pruning and perturbation
+    struct InvalidPolygonError : std::runtime_error {
+        using std::runtime_error::runtime_error;
+    };
+
     // ---------- sanity checks for polygon ------------
 
-    bool check_validity_of_polygon(Polygon_with_holes const &polygon);
+    // If the polygon is not valid and reason is given, the first problem found is stored in reason
+    bool check_validity_of_polygon(Polygon_with_holes const &polygon, std::string *reason = nullptr);
 
     // --------- pruning helpers for polygon --------------
 

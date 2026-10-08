@@ -65,3 +65,14 @@ void log_error(std::ostream &stream, const std::string& message)
            << "] ERROR: "
            << message << std::endl;
 }
+
+void log_warning(std::ostream &stream, const std::string& message)
+{
+    if (!stream)
+        return;
+
+    stream << "[dataset=" << current_context.dataset
+           << ", instance=" << current_context.instance_id
+           << "] WARNING: "
+           << message << std::endl;
+}

@@ -3,21 +3,25 @@
 #include "pruning/polygon_pruning.h"
 
 #include "geometry_utils.h"
-#include "io/logger.h"
 
 #include <cassert>
 #include <iostream>
 #include <random>
 
 
-bool check_validity_of_polygon(Polygon_with_holes const &polygon)
+bool check_validity_of_polygon(Polygon_with_holes const &polygon, std::string *reason)
 {
+    // Store the problem in reason (if given) instead of printing it, since this check runs repeatedly
+    auto report = [&](const std::string &message) {
+        if (reason) *reason = message;
+    };
+
     constexpr double epsilon = 1e-4;
     constexpr double angle_in_degree_for_colinearity = 2;
     const double eps2 = epsilon * epsilon;
 
     if (polygon.outer_boundary().size() < 3) {
-        log_error(std::cerr, "Outer boundary has less than 3 vertices!");
+        report("Outer boundary has less than 3 vertices!");
         return false;
     }
 
@@ -51,7 +55,7 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
             if (is_nearly_collinear_by_angle(*prev, *curr, *next,
                                              angle_in_degree_for_colinearity))
             {
-                log_error(std::cerr, name + " has nearly collinear consecutive vertices!");
+                report(name + " has nearly collinear consecutive vertices!");
                 return false;
             }
 
@@ -65,7 +69,7 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
 
     // ---- Orientation outer ----
     if (!outer.is_counterclockwise_oriented()) {
-        log_error(std::cerr,"Outer boundary is not CCW oriented!");
+        report("Outer boundary is not CCW oriented!");
         return false;
     }
 
@@ -76,14 +80,14 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
         for (auto e : outer.edges()) {
 
             if (e.source() == e.target()) {
-                log_error(std::cerr,"Outer boundary has zero-length edge!");
+                report("Outer boundary has zero-length edge!");
                 return false;
             }
 
             auto key = norm(e.source(), e.target());
             for (const auto& s : seen_edges)
                 if (s.first == key.first && s.second == key.second) {
-                    log_error(std::cerr,"Outer boundary has duplicate edge!");
+                    report("Outer boundary has duplicate edge!");
                     return false;
                 }
 
@@ -97,7 +101,7 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
         for (auto v : outer.vertices()) {
             for (const auto& s : seen)
                 if (sqdist(v, s) < eps2) {
-                    log_error(std::cerr,"Outer boundary has duplicate vertex (epsilon)!");
+                    report("Outer boundary has duplicate vertex (epsilon)!");
                     return false;
                 }
             seen.push_back(v);
@@ -105,8 +109,7 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
     }
 
     if (!outer.is_simple()) {
-        log_error(std::cerr,"Outer boundary is not simple!");
-        std::cerr << "Outer boundary is not simple\n";
+        report("Outer boundary is not simple!");
         return false;
     }
     // ---- Outer: consecutive checks ----
@@ -116,12 +119,12 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
         for (; it != outer.vertices_end(); ++it) {
 
             if (*prev == *it) {
-                log_error(std::cerr,"Outer boundary has identical consecutive vertices (exact)!");
+                report("Outer boundary has identical consecutive vertices (exact)!");
                 return false;
             }
 
             if (sqdist(*prev, *it) < eps2) {
-                log_error(std::cerr,"Outer boundary has consecutive vertices closer than epsilon!");
+                report("Outer boundary has consecutive vertices closer than epsilon!");
                 return false;
             }
 
@@ -129,12 +132,12 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
         }
 
         if (*prev == *outer.vertices_begin()) {
-            log_error(std::cerr,"Outer boundary closing edge identical vertices (exact)!");
+            report("Outer boundary closing edge identical vertices (exact)!");
             return false;
         }
 
         if (sqdist(*prev, *outer.vertices_begin()) < eps2) {
-            log_error(std::cerr,"Outer boundary closing edge vertices closer than epsilon!");
+            report("Outer boundary closing edge vertices closer than epsilon!");
             return false;
         }
     }
@@ -150,12 +153,12 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
         for (const auto& s : global_seen)
         {
             if (v == s) {
-                log_error(std::cerr,"Global duplicate vertex detected (exact)!");
+                report("Global duplicate vertex detected (exact)!");
                 return false;
             }
 
             if (sqdist(v, s) < eps2) {
-                log_error(std::cerr,"Global duplicate vertex detected (epsilon)!");
+                report("Global duplicate vertex detected (epsilon)!");
                 return false;
             }
         }
@@ -172,12 +175,12 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
     for (const auto& hole : polygon.holes())
     {
         if (hole.size() < 3) {
-            log_error(std::cerr,"Hole has less than 3 vertices!");
+            report("Hole has less than 3 vertices!");
             return false;
         }
 
         if (!hole.is_clockwise_oriented()) {
-            log_error(std::cerr,"Hole is not CW oriented!");
+            report("Hole is not CW oriented!");
             return false;
         }
 
@@ -187,7 +190,7 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
             for (auto v : hole.vertices()) {
                 for (const auto& s : seen)
                     if (sqdist(v, s) < eps2) {
-                        log_error(std::cerr,"Hole has duplicate vertex (epsilon)!");
+                        report("Hole has duplicate vertex (epsilon)!");
                         return false;
                     }
                 seen.push_back(v);
@@ -200,14 +203,14 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
             for (auto e : hole.edges()) {
 
                 if (e.source() == e.target()) {
-                    log_error(std::cerr,"Hole has zero-length edge!");
+                    report("Hole has zero-length edge!");
                     return false;
                 }
 
                 auto key = norm(e.source(), e.target());
                 for (const auto& s : seen_edges)
                     if (s.first == key.first && s.second == key.second) {
-                        log_error(std::cerr,"Hole has duplicate edge!");
+                        report("Hole has duplicate edge!");
                         return false;
                     }
 
@@ -216,7 +219,7 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
         }
 
         if (!hole.is_simple()) {
-            log_error(std::cerr,"Hole is not simple!");
+            report("Hole is not simple!");
             return false;
         }
 
@@ -227,12 +230,12 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
             for (; it != hole.vertices_end(); ++it) {
 
                 if (*prev == *it) {
-                    log_error(std::cerr,"Hole has identical consecutive vertices (exact)!");
+                    report("Hole has identical consecutive vertices (exact)!");
                     return false;
                 }
 
                 if (sqdist(*prev, *it) < eps2) {
-                    log_error(std::cerr,"Hole has consecutive vertices closer than epsilon!");
+                    report("Hole has consecutive vertices closer than epsilon!");
                     return false;
                 }
 
@@ -240,12 +243,12 @@ bool check_validity_of_polygon(Polygon_with_holes const &polygon)
             }
 
             if (*prev == *hole.vertices_begin()) {
-                log_error(std::cerr,"Hole closing edge identical vertices (exact)!");
+                report("Hole closing edge identical vertices (exact)!");
                 return false;
             }
 
             if (sqdist(*prev, *hole.vertices_begin()) < eps2) {
-                log_error(std::cerr,"Hole closing edge vertices closer than epsilon!");
+                report("Hole closing edge vertices closer than epsilon!");
                 return false;
             }
         }
@@ -507,7 +510,14 @@ void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
         auto new_point = epsilon_along_angle_bisector(prev, curr, next, outer, epsilon);
         move_hole_point(hole, intersection.hole_point, new_point);
 
-        while (not check_validity_of_polygon(polygon)) {
+        // Halving more often moves the point by far less than the millimeter grid of the input
+        const int max_halvings = 60;
+        int halvings = 0;
+        std::string reason;
+        while (not check_validity_of_polygon(polygon, &reason)) {
+            if (++halvings > max_halvings) {
+                throw InvalidPolygonError("could not move hole vertex off the outer boundary (" + reason + ")");
+            }
             epsilon = epsilon / 2.0;
             auto new_point = epsilon_towards_outer(curr, outer, epsilon);
             move_hole_point(hole, intersection.hole_point, new_point);
