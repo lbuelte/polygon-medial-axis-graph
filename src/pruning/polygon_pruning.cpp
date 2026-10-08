@@ -4,6 +4,7 @@
 
 #include "geometry_utils.h"
 
+#include <algorithm>
 #include <cassert>
 #include <iostream>
 #include <random>
@@ -301,7 +302,21 @@ void normalize_polygon_orientation(Polygon_with_holes& pwh)
 void contract_covertices_from_polygon(Polygon_with_holes &polygon, double distance_threshold)
 {
     // Helper to contract covertices of a given point vector
-    auto contract_covertices = [&](std::vector<Point_2> const &poly_vertices){
+    auto contract_covertices = [&](std::vector<Point_2> const &input_vertices){
+
+        // If the last and the first vertex are close, a group of close vertices wraps around
+        // the end of the ring. Start at a vertex whose predecessor is not close instead,
+        // so that every group lies within one pass of the loop below and gets merged.
+        std::vector<Point_2> poly_vertices = input_vertices;
+        auto m = poly_vertices.size();
+        if (m > 0 and squared_dist(poly_vertices[m - 1], poly_vertices[0]) < distance_threshold*distance_threshold) {
+            for (size_t s = 1; s < m; ++s) {
+                if (squared_dist(poly_vertices[s - 1], poly_vertices[s]) >= distance_threshold*distance_threshold) {
+                    std::rotate(poly_vertices.begin(), poly_vertices.begin() + s, poly_vertices.end());
+                    break;
+                }
+            }
+        }
 
         std::vector<Point_2> output_vertices;
         std::vector<Point_2> copoints;
@@ -365,7 +380,12 @@ void prune_collinear_vertices_from_polygon(Polygon_with_holes &polygon, double d
             const Point_2& curr = poly_vertices[v];
             const Point_2& next = poly_vertices[(v + 1) % n];
 
+            // Never remove two adjacent vertices in the same pass
             if (is_collinear[(v - 1 + n) % n]){                
+                continue;
+            }
+            // The last vertex is also adjacent to the first one
+            if (v == static_cast<int>(n) - 1 and is_collinear[0]){
                 continue;
             }
             if (is_nearly_collinear_by_angle(prev, curr, next, degree_offset)){
