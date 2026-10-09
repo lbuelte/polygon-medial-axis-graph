@@ -44,8 +44,9 @@ struct MedialAxisParams {
     double reflex_tolerance_deg = 2.0;          // vertices within this of 180 degrees are treated like reflex vertices
 };
 
-// [medial_axis_pruning]: pruning of the medial axis graph (not used by the pipeline yet)
+// [medial_axis_pruning]: simplification of the medial axis graph (used for the paper)
 struct MedialAxisPruningParams {
+    bool enabled = true;                        // prune the medial axis graph
     double collinearity_threshold_deg = 10.0;   // remove degree-2 nodes whose angle is within this of 180 degrees
     double merge_distance = 0.01;               // merge adjacent nodes closer than this ...
     double merge_distance_rel_bbox = 0.005;     // ... or than this fraction of the bbox diagonal (smaller one is used)

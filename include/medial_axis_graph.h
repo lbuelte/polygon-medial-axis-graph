@@ -67,6 +67,12 @@ private:
     // Selects the medial axis edges from the Voronoi diagram and fills nodes and edges
     void extract_medial_axis(VD const &vd, double reflex_tolerance_deg, bool keep_parabolas);
 
+    // Numbers the nodes by their coordinates (x, then y), orients every edge from the smaller
+    // to the larger node index and sorts the edges. The Voronoi diagram hands out its vertices
+    // in an order that depends on memory addresses; a canonical numbering makes the output and
+    // the (order-dependent) pruning of the graph reproducible.
+    void sort_nodes_and_edges();
+
     // Draws only the polygon (used if the graph has no nodes)
     void write_svg_polygon_only(const std::string &filename, double padding, double canvas_size) const;
 

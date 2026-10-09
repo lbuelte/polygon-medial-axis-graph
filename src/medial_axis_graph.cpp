@@ -9,7 +9,9 @@
 #include <fstream>
 #include <iostream>
 #include <map>
+#include <numeric>
 #include <set>
+#include <tuple>
 #include <utility>
 
 
@@ -21,6 +23,7 @@ void MedialAxisGraph::create_medial_axis(double reflex_tolerance_deg, bool keep_
     VD vd(sdg);
 
     extract_medial_axis(vd, reflex_tolerance_deg, keep_parabolas);
+    sort_nodes_and_edges();
     build_adjacency_list();
 }
 
@@ -462,4 +465,43 @@ void MedialAxisGraph::extract_medial_axis(VD const &vd, double reflex_tolerance_
             log_warning("unknown Voronoi edge type, edge skipped");
         }
     }
+}
+
+
+void MedialAxisGraph::sort_nodes_and_edges()
+{
+    // order[k] = old index of the node that gets the new index k
+    std::vector<int> order(nodes.size());
+    std::iota(order.begin(), order.end(), 0);
+    std::sort(order.begin(), order.end(), [&](int a, int b){ return nodes[a] < nodes[b]; });
+
+    std::vector<int> new_index(nodes.size());
+    std::vector<Point_2> sorted_nodes;
+    for (size_t k = 0; k < order.size(); ++k) {
+        new_index[order[k]] = k;
+        sorted_nodes.push_back(nodes[order[k]]);
+    }
+
+    // Edges with new node indices (smaller one first), together with their index in edges
+    std::vector<std::tuple<int, int, size_t>> sorted;
+    for (size_t k = 0; k < edges.size(); ++k) {
+        int u = new_index[edges[k].first];
+        int v = new_index[edges[k].second];
+        sorted.emplace_back(std::min(u, v), std::max(u, v), k);
+    }
+    std::sort(sorted.begin(), sorted.end());
+
+    std::vector<std::pair<int,int>> sorted_edges;
+    std::vector<bool> sorted_is_curve;
+    std::vector<Parabola_segment_2> sorted_parabolas;
+    for (const auto &[u, v, k] : sorted) {
+        sorted_edges.emplace_back(u, v);
+        sorted_is_curve.push_back(is_curve[k]);
+        sorted_parabolas.push_back(parabolas[k]);
+    }
+
+    nodes = std::move(sorted_nodes);
+    edges = std::move(sorted_edges);
+    is_curve = std::move(sorted_is_curve);
+    parabolas = std::move(sorted_parabolas);
 }

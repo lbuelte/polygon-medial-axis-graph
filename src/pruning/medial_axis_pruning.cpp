@@ -3,7 +3,6 @@
 #include "pruning/medial_axis_pruning.h"
 
 #include "geometry_utils.h"
-#include "io/logger.h"
 
 #include <iostream>
 #include <set>
@@ -71,18 +70,23 @@ bool holes_yield_cycles(MedialAxisGraph const &ma)
 }
 
 
-bool check_validity_of_medial_axis(MedialAxisGraph const &ma)
+bool check_validity_of_medial_axis(MedialAxisGraph const &ma, std::string *reason)
 {
+    // Store the problem in reason (if given) instead of printing it, since this check runs repeatedly
+    auto report = [&](const std::string &message) {
+        if (reason) *reason = message;
+    };
+
     if (not is_connected(ma)){
-        log_error("Medial axis is not connected!");
+        report("medial axis graph is not connected");
         return false;
     }
     if (not has_hole_or_is_tree(ma)){
-        log_error("The polygon has no hole and the medial axis is not a tree!");
+        report("polygon has no hole but the medial axis graph is not a tree");
         return false;
     }
     if (not holes_yield_cycles(ma)){
-        log_error("The number of cycles does not match the number of holes!");
+        report("number of cycles does not match the number of holes");
         return false;
     }
     return true;

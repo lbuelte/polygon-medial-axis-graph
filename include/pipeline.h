@@ -10,7 +10,10 @@
 // Computes the medial axis graph of one polygon:
 //  1. prune the polygon; while it is not valid, perturb it randomly and prune again
 //     (seeded with params.perturbation.seed, so results are reproducible)
-//  2. compute the medial axis graph of the valid polygon
+//  2. compute the medial axis graph of the valid polygon and prune it
+//     (if params.medial_axis_pruning.enabled)
+//  3. if the graph is not valid (not connected, or not one cycle per hole), perturb the polygon
+//     and repeat from 1, at most 10 times; after that the last graph is kept with a warning
 // If perturb_immediately is true, the polygon is perturbed before the first pruning
 // (used for instances on which CGAL got stuck or crashed before).
 // keep_parabolas only affects SVG drawings of the graph (parabolic edges drawn as curves).

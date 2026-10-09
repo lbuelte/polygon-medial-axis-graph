@@ -1,14 +1,16 @@
 // Created by Laura Bülte on 2026-03-20.
 //
-// Sanity checks and pruning for medial axis graphs.
-// The pruning functions are not used by the current pipeline (see src/pipeline.cpp);
-// is_connected is used by the test.
+// Sanity checks and pruning for medial axis graphs (used by compute_medial_axis_graph in
+// src/pipeline.cpp). The pruning is greedy: its result depends on the node numbering,
+// which is why MedialAxisGraph numbers its nodes by their coordinates.
 
 #ifndef MEDIAL_AXIS_GRAPH_MEDIAL_AXIS_PRUNING_H
 #define MEDIAL_AXIS_GRAPH_MEDIAL_AXIS_PRUNING_H
 
 #include "medial_axis_graph.h"
 #include "params.h"
+
+#include <string>
 
 // ---------- sanity checks for medial axis --------------
 
@@ -21,8 +23,9 @@ bool has_hole_or_is_tree(MedialAxisGraph const &ma);
 // True if the graph has as many independent cycles as the polygon has holes
 bool holes_yield_cycles(MedialAxisGraph const &ma);
 
-// All three checks above; logs the first one that fails
-bool check_validity_of_medial_axis(MedialAxisGraph const &ma);
+// All three checks above. If the graph is not valid and reason is given,
+// the first failed check is stored in reason.
+bool check_validity_of_medial_axis(MedialAxisGraph const &ma, std::string *reason = nullptr);
 
 
 // --------- pruning helpers for medial axis -----------------

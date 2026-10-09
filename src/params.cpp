@@ -44,6 +44,7 @@ template <class F> void for_each_param(MedialAxisParams &p, F &&f)
 
 template <class F> void for_each_param(MedialAxisPruningParams &p, F &&f)
 {
+    f("enabled", p.enabled, "prune the medial axis graph (false: keep the unpruned graph)");
     f("collinearity_threshold_deg", p.collinearity_threshold_deg, "remove degree-2 nodes whose angle is within this many degrees of 180");
     f("merge_distance", p.merge_distance, "merge adjacent nodes closer than this distance ...");
     f("merge_distance_rel_bbox", p.merge_distance_rel_bbox, "... or than this fraction of the bounding box diagonal (smaller threshold is used)");
@@ -56,7 +57,7 @@ template <class F> void for_each_section(Params &p, F &&f)
     f("validity", "When a pruned polygon is valid (invalid polygons are perturbed and pruned again)", p.validity);
     f("perturbation", "Random perturbation of polygons that are invalid after pruning", p.perturbation);
     f("medial_axis", "Extraction of the medial axis graph from the Voronoi diagram", p.medial_axis);
-    f("medial_axis_pruning", "Pruning of the medial axis graph (not used by the pipeline yet)", p.medial_axis_pruning);
+    f("medial_axis_pruning", "Simplification of the medial axis graph", p.medial_axis_pruning);
 }
 
 
@@ -81,6 +82,15 @@ void read_value(const toml::node &node, unsigned &out, const std::string &name)
     throw ParamsError(name + " must be a non-negative integer");
 }
 
+void read_value(const toml::node &node, bool &out, const std::string &name)
+{
+    if (auto v = node.value_exact<bool>()) {
+        out = *v;
+        return;
+    }
+    throw ParamsError(name + " must be true or false");
+}
+
 // Shortest representation that reads back to exactly the same double, always as a TOML float
 std::string format_value(double v)
 {
@@ -96,6 +106,11 @@ std::string format_value(double v)
 std::string format_value(unsigned v)
 {
     return std::to_string(v);
+}
+
+std::string format_value(bool v)
+{
+    return v ? "true" : "false";
 }
 
 // Comma-separated list of the valid keys of a section (for error messages)
