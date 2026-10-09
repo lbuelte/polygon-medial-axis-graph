@@ -39,3 +39,11 @@ target_link_libraries(medial_axis_graph_lib PUBLIC
 add_executable(medial_axis_graph apps/main.cpp)
 target_compile_options(medial_axis_graph PRIVATE ${WARNING_FLAGS})
 target_link_libraries(medial_axis_graph PRIVATE medial_axis_graph_lib)
+
+# Test: medial axis graphs of the example polygons are connected and simple
+enable_testing()
+add_executable(test_examples tests/test_examples.cpp)
+target_compile_options(test_examples PRIVATE ${WARNING_FLAGS})
+target_link_libraries(test_examples PRIVATE medial_axis_graph_lib)
+add_test(NAME example_graphs_connected_and_simple COMMAND test_examples
+         WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
