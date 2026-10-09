@@ -286,3 +286,7 @@ Third-party components:
 - CGAL: GPL-3.0-or-later / LGPL-3.0-or-later, depending on the package. The segment Delaunay graph and Voronoi diagram packages used here are GPL-3.0-or-later.
 - nlohmann/json and toml++: MIT (license files in `external/`).
 - The example data in `examples/data/osm_poppelsdorf/` is © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors and available under the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
+
+## Use of AI
+
+The code used for the paper (tag `sigspatial26`) was written by the authors without AI assistance. The preparation of this repository for publication was done with the help of the AI model Claude Opus 5.5 (Anthropic), using Claude Code: restructuring and commenting the code, the command line interface and parameter file, the bug fixes described above and in the commit history, the test, and this README. All changes were directed and reviewed by the author, and the resulting graphs were checked against those of the paper's code.
