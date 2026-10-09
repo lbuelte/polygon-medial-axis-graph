@@ -19,7 +19,11 @@
 // Kernel: exact predicates, inexact (double) constructions
 using K  = CGAL::Exact_predicates_inexact_constructions_kernel;
 
-// Segment Delaunay graph of points and segments; its dual is the segment Voronoi diagram
+// Segment Delaunay graph of points and segments; its dual is the segment Voronoi diagram.
+// Note: with K = Epick these traits evaluate their predicates in floating point (not exactly),
+// which makes a few results vary between runs (see "Known limitations" in the README).
+// CGAL::Segment_Delaunay_graph_filtered_traits_2<K> would be exact and deterministic,
+// but changes about 1.4 % of the graphs, so the traits used for the paper are kept.
 using Gt  = CGAL::Segment_Delaunay_graph_traits_2<K>;                            // geometric traits
 using SDG = CGAL::Segment_Delaunay_graph_2<Gt>;
 // Adaptor that turns the segment Delaunay graph into a Voronoi diagram:

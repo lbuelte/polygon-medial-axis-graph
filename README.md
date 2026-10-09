@@ -217,7 +217,11 @@ Since the paper, two bugs in the polygon pruning have been fixed (a group of clo
 
 ## Known limitations
 
-- **Run-to-run variation:** for a handful of polygons (about 5 of 119,229 in the Bonn data), the medial axis graph can differ between two runs on the same input. The variation depends on memory addresses and has not been tracked down yet. The order of nodes in the JSON can also differ between runs.
+- **Run-to-run variation:** for a handful of polygons (1–2 of 119,229 per pair of runs in the Bonn data), the medial axis graph can differ between two runs on the same input. The cause is CGAL's segment Delaunay graph traits used here (`Segment_Delaunay_graph_traits_2`), which evaluate geometric predicates in floating point. In nearly degenerate configurations, common in rectilinear buildings, a predicate can then go either way, depending on CGAL's internal processing order and thus on memory addresses. Two examples from the Bonn data:
+  - Hochkreuz-Bundesviertel, id 392 (279 vertices): a Voronoi vertex where many sites are nearly cocircular is split differently, so one node lies 2.8 m apart between runs and the edges next to it change.
+  - Röttgen, id 207: a 2.5 m medial axis edge whose midpoint lies only 0.3 mm from the polygon boundary is kept in one run and dropped in another.
+
+  With CGAL's filtered traits (`Segment_Delaunay_graph_filtered_traits_2`, exact predicates) the results are deterministic, and CGAL no longer hangs or crashes on the problematic instances. However, this changes 1.4 % of the Bonn graphs (and more of them become disconnected: 196 instead of 89), so the paper's traits are kept for now. The order of nodes in the JSON can also differ between runs.
 - **Disconnected graphs:** about 0.07 % of the graphs (89 of 119,229 in the Bonn data) are not connected, although the medial axis of a polygon is.
 - **Validity check:** it does not check that holes lie inside the outer boundary or that holes do not intersect each other.
 
