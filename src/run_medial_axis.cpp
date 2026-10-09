@@ -34,33 +34,23 @@ nlohmann::json run_medial_axis_with_holes(Config const &config, Polygon_with_hol
     // (Possibly perturb and) prune polygon
     make_polygon_valid(perturb_immediately);
 
-    // Create medial axis from polygon
-    auto ma = MedialAxisWithHoles(polygon);    
-    ma.create_medial_axis(config);
-    if (svg_path.has_value()){
-        ma.write_svg_with_holes(svg_path.value());
-    }
-    return ma.to_json_simple(shape_id);  
-
-    // /* Old recursive medial axis pruning code: */
-
-    // // Compute and prune medial axis, if it is not valid, perturb polygon and repeat
-    // while (true) {
+    // Compute and prune medial axis, if it is not valid, perturb polygon and repeat
+    while (true) {
         
-    //     // Create medial axis from polygon, and prune it    
-    //     auto ma = MedialAxisWithHoles(polygon);    
-    //     ma.create_medial_axis(config);
-    //     prune_medial_axis(ma, config.maprune_init);
+        // Create medial axis from polygon, and prune it    
+        auto ma = MedialAxisWithHoles(polygon);    
+        ma.create_medial_axis(config);
+        prune_medial_axis(ma, config.maprune_init);
 
-    //     // If medial axis is valid, write svg and return json
-    //     if (check_validity_of_medial_axis){
-    //         if (svg_path.has_value()){
-    //             ma.write_svg_with_holes(svg_path.value());
-    //         }
-    //         return ma.to_json_simple(shape_id);            
-    //     }
+        // If medial axis is valid, write svg and return json
+        if (check_validity_of_medial_axis){
+            if (svg_path.has_value()){
+                ma.write_svg_with_holes(svg_path.value());
+            }
+            return ma.to_json_simple(shape_id);            
+        }
 
-    //     // If medial axis is not valid even after pruning, perturb and prune polygon and recompute ma
-    //     make_polygon_valid(true);
-    // }
+        // If medial axis is not valid even after pruning, perturb and prune polygon and recompute ma
+        make_polygon_valid(true);
+    }
 }
