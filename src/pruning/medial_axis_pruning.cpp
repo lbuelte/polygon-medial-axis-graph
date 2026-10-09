@@ -11,13 +11,18 @@
 #include <unordered_map>
 
 
-bool is_connected(MedialAxisWithHoles const &ma)
+bool is_connected(MedialAxisGraph const &ma)
 {
-    if (ma.num_edges() + 1 < ma.num_vertices()){
+    if (ma.num_nodes() == 0){
+        return false;
+    }
+    // A connected graph with n nodes has at least n - 1 edges
+    if (ma.num_edges() + 1 < ma.num_nodes()){
         return false;
     }
 
-    std::vector<bool> visited(ma.num_vertices(), false);
+    // Depth-first search from node 0
+    std::vector<bool> visited(ma.num_nodes(), false);
     std::stack<int> to_visit;
 
     to_visit.push(0);
@@ -32,7 +37,7 @@ bool is_connected(MedialAxisWithHoles const &ma)
             }
         }
     }
-    for (int v = 0; v < ma.num_vertices(); ++v){
+    for (size_t v = 0; v < ma.num_nodes(); ++v){
         if (not visited[v]){
             return false;
         }
@@ -41,42 +46,43 @@ bool is_connected(MedialAxisWithHoles const &ma)
 }
 
 
-bool has_hole_or_is_tree(MedialAxisWithHoles const &ma)
+bool has_hole_or_is_tree(MedialAxisGraph const &ma)
 {
     if (ma.num_polygon_holes() > 0){
         return true;
     }
     if (is_connected(ma)){
-        return ma.num_edges() + 1 == ma.num_vertices();
+        return ma.num_edges() + 1 == ma.num_nodes();
     }
     return false;
 }
 
 
-bool hole_yields_circle(MedialAxisWithHoles const &ma)
+bool holes_yield_cycles(MedialAxisGraph const &ma)
 {
     if (ma.num_polygon_holes() == 0){
         return true;
     }
+    // A connected graph has edges - nodes + 1 independent cycles
     if (is_connected(ma)){
-        return ma.num_polygon_holes() == ma.num_edges() - ma.num_vertices() + 1;
+        return ma.num_polygon_holes() + ma.num_nodes() == ma.num_edges() + 1;
     }
     return false;
 }
 
 
-bool check_validity_of_medial_axis(MedialAxisWithHoles const &ma)
+bool check_validity_of_medial_axis(MedialAxisGraph const &ma)
 {
     if (not is_connected(ma)){
-        log_error(std::cerr, "Medial axis is not connected!");
+        log_error("Medial axis is not connected!");
         return false;
     }
     if (not has_hole_or_is_tree(ma)){
-        log_error(std::cerr, "The polygon has no hole and the medial axis is not a tree!");
+        log_error("The polygon has no hole and the medial axis is not a tree!");
         return false;
     }
-    if (not hole_yields_circle(ma)){
-        log_error(std::cerr, "The number of circles does not match the number of holes!");
+    if (not holes_yield_cycles(ma)){
+        log_error("The number of cycles does not match the number of holes!");
         return false;
     }
     return true;
@@ -84,37 +90,34 @@ bool check_validity_of_medial_axis(MedialAxisWithHoles const &ma)
 
 
 
-// Contract connected components of epsilon-close vertices and replace them by their mean point
-void contract_adjacent_covertices_from_medial_axis(MedialAxisWithHoles &ma, double distance_threshold)
+// Contract connected components of epsilon-close nodes and replace them by their mean point
+void merge_close_adjacent_nodes(MedialAxisGraph &ma, double distance_threshold)
 {
-    // Helper to collect all adjacent epsilon-close vertices (idx) for v
-    auto collect_adjacent_covertices_of_v = [&](int v){
+    // Helper to collect all adjacent epsilon-close nodes (idx) for v
+    auto collect_adjacent_close_nodes_of_v = [&](int v){
 
-        std::vector<int> covertices;
-        auto n = ma.num_vertices();
-
-        const Point_2& curr = ma.get_vertices()[v];
+        std::vector<int> close_nodes;
+        const Point_2& curr = ma.get_nodes()[v];
     
         for (auto const &w : ma.get_adjacency_list()[v]){   
   
-            const Point_2& other = ma.get_vertices()[w];
+            const Point_2& other = ma.get_nodes()[w];
 
-            // We collect copoints if the current has a follwoing covertex
+            // We collect close nodes if the current node has an adjacent close node
             if (squared_dist(curr, other) < distance_threshold*distance_threshold){
-                if (covertices.empty()){
-                    covertices.push_back(v);
+                if (close_nodes.empty()){
+                    close_nodes.push_back(v);
                 }
-                covertices.push_back(w);
-                continue;
+                close_nodes.push_back(w);
             }
         }
-        return covertices;
+        return close_nodes;
     };
 
-    // Collect all adjacent covertices 
-    std::vector<std::vector<int>> vector_of_covertices;
-    for (int v = 0; v < ma.num_vertices(); ++v){
-        vector_of_covertices.push_back(collect_adjacent_covertices_of_v(v));
+    // Collect all adjacent close nodes
+    std::vector<std::vector<int>> vector_of_close_nodes;
+    for (size_t v = 0; v < ma.num_nodes(); ++v){
+        vector_of_close_nodes.push_back(collect_adjacent_close_nodes_of_v(v));
     }
 
     // Minimal UnionFind implementation
@@ -150,51 +153,51 @@ void contract_adjacent_covertices_from_medial_axis(MedialAxisWithHoles &ma, doub
         }
     };
 
-    // Build covertex connected components via UnionFind
-    DSU dsu(ma.num_vertices());
-    for (int v = 0; v < ma.num_vertices(); ++v){
-        for (int w : vector_of_covertices[v]){
+    // Build connected components of close nodes via UnionFind
+    DSU dsu(ma.num_nodes());
+    for (size_t v = 0; v < ma.num_nodes(); ++v){
+        for (int w : vector_of_close_nodes[v]){
             dsu.unite(v, w);
         }
     }
     std::unordered_map<int, std::vector<int>> components;
-    for (int i = 0; i < ma.num_vertices(); ++i) {
+    for (size_t i = 0; i < ma.num_nodes(); ++i) {
         int root = dsu.find(i);
         components[root].push_back(i);
     }
     // Return if all components are singletons
-    if (components.size() == ma.num_vertices()){
+    if (components.size() == ma.num_nodes()){
         return;
     }
-    // Otherwise, build new vertex and edge set with meanPoint for covertices
+    // Otherwise, build new node and edge set with the mean point for close nodes
 
-    std::vector<int> idx_in_new_vertices(ma.num_vertices());
+    std::vector<int> idx_in_new_nodes(ma.num_nodes());
 
-    std::vector<Point_2> new_vertices;
+    std::vector<Point_2> new_nodes;
     std::vector<std::pair<int, int>> new_edges;
 
-    for (auto [root, covertices] : components){
+    for (auto [root, close_nodes] : components){
         // First handle components containing singletons
-        if (covertices.size() == 1){
-            idx_in_new_vertices[covertices.front()] = new_vertices.size();
-            new_vertices.push_back(ma.get_vertices()[covertices.front()]);
+        if (close_nodes.size() == 1){
+            idx_in_new_nodes[close_nodes.front()] = new_nodes.size();
+            new_nodes.push_back(ma.get_nodes()[close_nodes.front()]);
             continue;
         }
-        // For covertices, store new idx and push back mean
-        for (auto const &v : covertices){
-            idx_in_new_vertices[v] = new_vertices.size();
+        // For close nodes, store new idx and push back mean
+        for (auto const &v : close_nodes){
+            idx_in_new_nodes[v] = new_nodes.size();
         }
         std::vector<Point_2> group;
-        for (int idx : covertices){
-            group.push_back(ma.get_vertices()[idx]);
+        for (int idx : close_nodes){
+            group.push_back(ma.get_nodes()[idx]);
         }        
-        new_vertices.push_back(meanPoint(group));
+        new_nodes.push_back(mean_point(group));
     }
 
-    // Initialize new edge list with new vertex indices
+    // Initialize new edge list with new node indices
     for (auto const &edge : ma.get_edges()){
-        auto new_source = idx_in_new_vertices[edge.first];
-        auto new_target = idx_in_new_vertices[edge.second];
+        auto new_source = idx_in_new_nodes[edge.first];
+        auto new_target = idx_in_new_nodes[edge.second];
 
         if (new_source == new_target) {
             continue;
@@ -202,18 +205,18 @@ void contract_adjacent_covertices_from_medial_axis(MedialAxisWithHoles &ma, doub
         new_edges.emplace_back(new_source, new_target);
     }    
     
-    // Update vertices, edges and adjacency list
-    ma.set_vertices_and_edges(std::move(new_vertices), std::move(new_edges));
+    // Update nodes, edges and adjacency list
+    ma.set_nodes_and_edges(std::move(new_nodes), std::move(new_edges));
 }
 
 
-// Iteratively prune adjacent collinear vertices
-void prune_collinear_vertices_from_medial_axis(MedialAxisWithHoles &ma, double degree_offset) 
+// Iteratively prune adjacent collinear nodes
+void remove_nearly_collinear_nodes(MedialAxisGraph &ma, double degree_offset) 
 {
-    auto prune_collinear_vertices_once = [&]() {
-        // Collect vertices to contract
-        std::vector<bool> contract_vertex(ma.num_vertices(), false);
-        for (int v = 0; v < ma.num_vertices(); ++v) {
+    auto remove_nearly_collinear_nodes_once = [&]() {
+        // Collect nodes to contract
+        std::vector<bool> contract_node(ma.num_nodes(), false);
+        for (size_t v = 0; v < ma.num_nodes(); ++v) {
             if (ma.get_adjacency_list()[v].size() != 2){
                 continue;
             }
@@ -222,35 +225,35 @@ void prune_collinear_vertices_from_medial_axis(MedialAxisWithHoles &ma, double d
             int n1 = ma.get_adjacency_list()[v][1];
 
             // Skip if one of the neighbors was already contracted
-            if (contract_vertex[n0] or contract_vertex[n1]){
+            if (contract_node[n0] or contract_node[n1]){
                 continue;
             }
 
-            if (is_nearly_collinear_by_angle(ma.get_vertices()[n0], ma.get_vertices()[v], ma.get_vertices()[n1], degree_offset)){
-                contract_vertex[v] = true;
+            if (is_nearly_collinear_by_angle(ma.get_nodes()[n0], ma.get_nodes()[v], ma.get_nodes()[n1], degree_offset)){
+                contract_node[v] = true;
             }
         }
 
-        // Collect uncontracted vertices
-        std::vector<int> new_index(ma.num_vertices(), -1);
-        std::vector<Point_2> new_vertices;
-        for (int i = 0; i < ma.num_vertices(); ++i) {
-            if (not contract_vertex[i]) {
-                new_index[i] = new_vertices.size();
-                new_vertices.push_back(ma.get_vertices()[i]);
+        // Collect uncontracted nodes
+        std::vector<int> new_index(ma.num_nodes(), -1);
+        std::vector<Point_2> new_nodes;
+        for (size_t i = 0; i < ma.num_nodes(); ++i) {
+            if (not contract_node[i]) {
+                new_index[i] = new_nodes.size();
+                new_nodes.push_back(ma.get_nodes()[i]);
             }
         }
 
-        // If no vertices where contracted return false
-        if (new_vertices.size() == ma.num_vertices()){
+        // If no nodes were contracted return false
+        if (new_nodes.size() == ma.num_nodes()){
             return false;
         }
 
         std::set<std::pair<int,int>> new_edges;
 
         // Contract edges
-        for (int v = 0; v < ma.num_vertices(); ++v) {
-            if (not contract_vertex[v]) {
+        for (size_t v = 0; v < ma.num_nodes(); ++v) {
+            if (not contract_node[v]) {
                 continue;
             }
             int n0 = ma.get_adjacency_list()[v][0];
@@ -262,9 +265,9 @@ void prune_collinear_vertices_from_medial_axis(MedialAxisWithHoles &ma, double d
             new_edges.insert({a, b});
         }
 
-        // Copy existing edges that do not involve contracted vertices
+        // Copy existing edges that do not involve contracted nodes
         for (auto [u, v] : ma.get_edges()) {
-            if (contract_vertex[u] || contract_vertex[v]) continue;
+            if (contract_node[u] || contract_node[v]) continue;
             int a = new_index[u];
             int b = new_index[v];
             if (a > b) std::swap(a, b);
@@ -276,26 +279,26 @@ void prune_collinear_vertices_from_medial_axis(MedialAxisWithHoles &ma, double d
         std::vector<std::pair<int,int>> new_edges_vector(new_edges.begin(), new_edges.end());
 
 
-        // Update vertices, edges and adjacency list
-        ma.set_vertices_and_edges(std::move(new_vertices), std::move(new_edges_vector));
+        // Update nodes, edges and adjacency list
+        ma.set_nodes_and_edges(std::move(new_nodes), std::move(new_edges_vector));
         return true;
     };
 
     bool changed = false;
     do {
-        changed = prune_collinear_vertices_once();
+        changed = remove_nearly_collinear_nodes_once();
     } while (changed);
 
 }
 
 
-void prune_medial_axis(MedialAxisWithHoles &ma, MedialAxisPruningConfig const &config)
+void prune_medial_axis(MedialAxisGraph &ma, MedialAxisPruningParams const &pruning)
 {
-    prune_collinear_vertices_from_medial_axis(ma, config.collinearity_threshold);
-    auto dist_threshold = std::min(epsilon_fraction_of_bbox_diag(ma.get_polygon(), config.bbox_relative_covertex_threshold),
-                                   config.absolute_covertex_threshold);
-    contract_adjacent_covertices_from_medial_axis(ma, dist_threshold);
-    prune_collinear_vertices_from_medial_axis(ma, config.collinearity_threshold);
+    remove_nearly_collinear_nodes(ma, pruning.collinearity_threshold_deg);
+    auto dist_threshold = std::min(epsilon_fraction_of_bbox_diag(ma.get_polygon(), pruning.merge_distance_rel_bbox),
+                                   pruning.merge_distance);
+    merge_close_adjacent_nodes(ma, dist_threshold);
+    remove_nearly_collinear_nodes(ma, pruning.collinearity_threshold_deg);
 }
 
 

@@ -1,21 +1,34 @@
 #!/bin/bash
-# watchdog.sh - Run C++ program with per-instance timeout detection
+# watchdog.sh - Run medial_axis_graph with per-instance timeout and crash detection
 #
 # Usage (from the repository root):
-#   scripts/watchdog.sh [config.toml] [timeout_seconds]
+#   scripts/watchdog.sh [timeout_seconds] -- <medial_axis_graph arguments>
+# Example:
+#   scripts/watchdog.sh 10 -- --input input --output output --no-svg
 #
-# Instances that time out or segfault are appended to the stuck/segfault
-# instance lists. On restart, the program perturbs these instances before
-# computing their medial axis. The list paths must match the
-# stuck_instances_file / segfault_instances_file keys in the config.
+# Instances that make no progress for timeout_seconds (default 10) or cause a
+# segmentation fault are appended to the stuck/segfault instance lists, and the
+# run is restarted. The lists are passed to the tool with --perturb-instances,
+# so these instances are perturbed before their medial axis is computed.
+# Set EXECUTABLE to use another build of the tool.
 
-EXECUTABLE="${EXECUTABLE:-build/MedialAxisWithHoles}"
-CONFIG_FILE="${1:-config.toml}"
-TIMEOUT_SECONDS="${2:-10}"
+EXECUTABLE="${EXECUTABLE:-build/medial_axis_graph}"
+TIMEOUT_SECONDS=10
+if [[ $# -gt 0 && "$1" != "--" ]]; then
+    TIMEOUT_SECONDS="$1"
+    shift
+fi
+if [[ "$1" != "--" ]]; then
+    echo "Usage: scripts/watchdog.sh [timeout_seconds] -- <medial_axis_graph arguments>" >&2
+    exit 2
+fi
+shift
+TOOL_ARGS=("$@")
+
 STUCK_INSTANCES_FILE="scripts/stuck_instances.txt"
 SEGFAULT_INSTANCES_FILE="scripts/segfault_instances.txt"
 LOG_FILE="watchdog.log"
-PROGRESS_FILE="last_progress.tmp"  # Your C++ program writes "DATASET INSTANCE_ID" here
+PROGRESS_FILE="last_progress.tmp"  # the tool writes "DATASET|INDEX" of the current instance here
 
 log() {
     echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" | tee -a "$LOG_FILE"
@@ -31,7 +44,9 @@ while true; do
     echo "" > "$PROGRESS_FILE"
 
     # Launch the C++ program in background
-    ./$EXECUTABLE "$CONFIG_FILE" &
+    "$EXECUTABLE" "${TOOL_ARGS[@]}" \
+        --perturb-instances "$STUCK_INSTANCES_FILE" \
+        --perturb-instances "$SEGFAULT_INSTANCES_FILE" &
     CHILD_PID=$!
 
     STUCK=false

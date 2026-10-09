@@ -1,9 +1,9 @@
 // Small geometric helpers shared by the medial axis computation and the pruning code.
 
-#ifndef MEDIALAXISWITHHOLES_GEOMETRY_UTILS_H
-#define MEDIALAXISWITHHOLES_GEOMETRY_UTILS_H
+#ifndef MEDIAL_AXIS_GRAPH_GEOMETRY_UTILS_H
+#define MEDIAL_AXIS_GRAPH_GEOMETRY_UTILS_H
 
-#include "CGAL_includes.h"
+#include "cgal_types.h"
 
 #include <algorithm>
 #include <cmath>
@@ -11,13 +11,14 @@
 #include <vector>
 
 
-// Helper to compute squared distance of x and y
+// Squared Euclidean distance between a and b
 inline double squared_dist(Point_2 const &a, Point_2 const &b)
 {
     return CGAL::squared_distance(a, b);
 }
 
-// Helper to compute epsilon times the length of the bounding box diagonal of a polygon
+// epsilon times the length of the bounding box diagonal of the polygon,
+// used to turn relative thresholds into absolute distances
 inline double epsilon_fraction_of_bbox_diag(Polygon_with_holes const &polygon, double epsilon){
     auto bbox = polygon.bbox();
     double dx = bbox.xmax() - bbox.xmin();
@@ -26,8 +27,8 @@ inline double epsilon_fraction_of_bbox_diag(Polygon_with_holes const &polygon, d
     return epsilon * diag;
 }
 
-// Helper to compute mean of point vector
-inline Point_2 meanPoint(std::vector<Point_2> points)
+// Mean (centroid) of a non-empty set of points
+inline Point_2 mean_point(std::vector<Point_2> const &points)
 {
     Point_2 sum = std::accumulate(points.begin(), points.end(), Point_2{0.0, 0.0},
         [](const Point_2& a, const Point_2& b) {
@@ -37,7 +38,8 @@ inline Point_2 meanPoint(std::vector<Point_2> points)
     return Point_2{ sum.x() / count, sum.y() / count };
 }
 
-// Helper to check if prev - curr - next has a nearly collinear angle
+// True if the angle prev - curr - next differs from 180 degrees by at most degree_offset,
+// i.e. curr lies almost on a straight line between prev and next
 inline bool is_nearly_collinear_by_angle(
     const Point_2& prev,
     const Point_2& curr,
@@ -63,15 +65,17 @@ inline bool is_nearly_collinear_by_angle(
     return std::abs(angle_deg - 180.0) <= degree_offset;
 }
 
-// Helper to check if prev - curr - next is a reflex vertex or almost collinear
-inline bool is_reflex_vertex(
+// True if curr is a reflex vertex (right turn prev - curr - next, i.e. an interior angle
+// above 180 degrees for a counterclockwise ring) or a nearly straight vertex (angle within
+// tolerance_deg of 180 degrees).
+// Medial axis edges ending at such vertices are not part of the medial axis graph.
+inline bool is_reflex_or_nearly_straight(
     const Point_2 &prev,
     const Point_2 &curr,
-    const Point_2 &next)
+    const Point_2 &next,
+    double tolerance_deg)
 {
-    const double degree_offset = 2.0;
-
-    if (is_nearly_collinear_by_angle(prev, curr, next, degree_offset))
+    if (is_nearly_collinear_by_angle(prev, curr, next, tolerance_deg))
         return true;
 
     CGAL::Orientation o = CGAL::orientation(prev, curr, next);
@@ -80,4 +84,4 @@ inline bool is_reflex_vertex(
 }
 
 
-#endif // MEDIALAXISWITHHOLES_GEOMETRY_UTILS_H
+#endif // MEDIAL_AXIS_GRAPH_GEOMETRY_UTILS_H

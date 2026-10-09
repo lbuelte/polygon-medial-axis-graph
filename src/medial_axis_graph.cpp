@@ -1,12 +1,11 @@
 // Created by Laura Bülte
 
-#include "MedialAxisWithHoles.h"
+#include "medial_axis_graph.h"
 
 #include "geometry_utils.h"
 #include "io/logger.h"
 
 #include <algorithm>
-#include <cassert>
 #include <fstream>
 #include <iostream>
 #include <map>
@@ -14,26 +13,74 @@
 #include <utility>
 
 
-void MedialAxisWithHoles::create_medial_axis(Config const &config) 
+void MedialAxisGraph::create_medial_axis(double reflex_tolerance_deg, bool keep_parabolas)
 {
-    initialize_voronoi();
-    extract_medial_axis(config.ma.use_parabolas);
+    // The segment Delaunay graph and its dual Voronoi diagram are only needed here
+    SDG sdg;
+    insert_boundary_sites(sdg);
+    VD vd(sdg);
+
+    extract_medial_axis(vd, reflex_tolerance_deg, keep_parabolas);
     build_adjacency_list();
 }
-\
-void MedialAxisWithHoles::set_vertices_and_edges(
-    std::vector<Point_2> vertices,
+
+void MedialAxisGraph::set_nodes_and_edges(
+    std::vector<Point_2> nodes,
     std::vector<std::pair<int,int>> edges)
 {
-    // Move the data into the member variables
-    this->vertices = std::move(vertices);
+    this->nodes = std::move(nodes);
     this->edges = std::move(edges);
 
-    build_adjacency_list(); // rebuild adjacency after updating edges
+    // The new edges are not known to be parabolas, so draw all of them as straight lines
+    is_curve.assign(this->edges.size(), false);
+    parabolas.assign(this->edges.size(), Parabola_segment_2());
+
+    build_adjacency_list();
 }
 
 
-void MedialAxisWithHoles::write_svg_polygon_only(
+nlohmann::json MedialAxisGraph::to_json(int shape_id) const
+{
+    nlohmann::json j;
+    j["id"] = shape_id;
+
+    // ---- Polygon ----
+    j["polygon"] = nlohmann::json::object();
+    j["polygon"]["outer"] = nlohmann::json::array();
+    for (auto vit = polygon.outer_boundary().vertices_begin();
+        vit != polygon.outer_boundary().vertices_end(); ++vit)
+    {
+        j["polygon"]["outer"].push_back({{"x", vit->x()}, {"y", vit->y()}});
+    }
+    j["polygon"]["holes"] = nlohmann::json::array();
+    for (const auto& h : polygon.holes())
+    {
+        nlohmann::json hole_json = nlohmann::json::array();
+        for (auto vit = h.vertices_begin(); vit != h.vertices_end(); ++vit)
+        {
+            hole_json.push_back({{"x", vit->x()}, {"y", vit->y()}});
+        }
+        j["polygon"]["holes"].push_back(hole_json);
+    }
+
+    // ---- Medial axis graph: nodes (stored under the key "vertices") and edges ----
+    j["medial_axis"] = nlohmann::json::object();
+    j["medial_axis"]["vertices"] = nlohmann::json::array();
+    for (const auto& v : nodes)
+    {
+        j["medial_axis"]["vertices"].push_back({{"x", v.x()}, {"y", v.y()}});
+    }
+    j["medial_axis"]["edges"] = nlohmann::json::array();
+    for (const auto& e : edges)
+    {
+        j["medial_axis"]["edges"].push_back({{"source", e.first}, {"target", e.second}});
+    }
+
+    return j;
+}
+
+
+void MedialAxisGraph::write_svg_polygon_only(
     const std::string &filename, double padding, double canvas_size) const
 {
     if (polygon.outer_boundary().is_empty()) return;
@@ -41,28 +88,21 @@ void MedialAxisWithHoles::write_svg_polygon_only(
     double radius = 2.0;
 
     // ---- compute bounding box from outer boundary ----
-    auto vit = polygon.outer_boundary().vertices_begin();
-
-    double min_x = vit->x();
-    double min_y = vit->y();
-    double max_x = min_x;
-    double max_y = min_y;
-
-    for (; vit != polygon.outer_boundary().vertices_end(); ++vit) {
-        min_x = std::min(min_x, vit->x());
-        min_y = std::min(min_y, vit->y());
-        max_x = std::max(max_x, vit->x());
-        max_y = std::max(max_y, vit->y());
+    auto bbox = polygon.outer_boundary().bbox();
+    double min_x = bbox.xmin();
+    double min_y = bbox.ymin();
+    double width  = bbox.xmax() - min_x;
+    double height = bbox.ymax() - min_y;
+    if (width == 0 || height == 0) {
+        log_warning("polygon has zero width or height, no SVG written");
+        return;
     }
-
-    double width  = max_x - min_x;
-    double height = max_y - min_y;
-    if (width == 0 || height == 0) return;
 
     double scale_x = (canvas_size - 2*padding) / width;
     double scale_y = (canvas_size - 2*padding) / height;
     double scale = std::min(scale_x, scale_y);
 
+    // map polygon coordinates to SVG coordinates (y axis points down in SVG)
     auto sx = [&](double x) { return (x - min_x) * scale + padding; };
     auto sy = [&](double y) { return canvas_size - ((y - min_y) * scale + padding); };
 
@@ -109,18 +149,11 @@ void MedialAxisWithHoles::write_svg_polygon_only(
     }
 
     // ---- polygon statistics ----
-    std::size_t num_holes = std::distance(polygon.holes_begin(),
-                                        polygon.holes_end());
-
-    std::size_t num_outer_vertices =
-        polygon.outer_boundary().size();
-
+    std::size_t num_holes = polygon.number_of_holes();
+    std::size_t num_outer_vertices = polygon.outer_boundary().size();
     std::size_t num_hole_vertices = 0;
     for (const auto& h : polygon.holes())
         num_hole_vertices += h.size();
-
-    std::size_t total_polygon_vertices =
-        num_outer_vertices + num_hole_vertices;
 
     double legend_x = 15;
     double legend_y = 25;
@@ -147,46 +180,40 @@ void MedialAxisWithHoles::write_svg_polygon_only(
     svg << "</svg>\n";
     svg.close();
 
-    std::cout << "Polygon-only SVG written to " << filename << std::endl;
+    log_info("polygon-only SVG written to " + filename);
 }
 
 
-void MedialAxisWithHoles::write_svg_with_holes(
-        const std::string &filename, double padding, double canvas_size) const 
+void MedialAxisGraph::write_svg(
+        const std::string &filename, double padding, double canvas_size) const
 {
     double radius = 2.0; // fixed small radius for visualization
 
-    if (vertices.empty()) {
+    if (nodes.empty()) {
         write_svg_polygon_only(filename, padding, canvas_size);
         return;
     }
 
-    // ---- bounding box ----
-    double min_x = vertices[0].x();
-    double min_y = vertices[0].y();
-    double max_x = min_x;
-    double max_y = min_y;
+    // ---- bounding box of the polygon (contains the whole graph) ----
+    auto bbox = polygon.outer_boundary().bbox();
+    double min_x = bbox.xmin();
+    double min_y = bbox.ymin();
+    double width  = bbox.xmax() - min_x;
+    double height = bbox.ymax() - min_y;
 
-    for (const auto& v : vertices) {
-        min_x = std::min(min_x, v.x());
-        min_y = std::min(min_y, v.y());
-        max_x = std::max(max_x, v.x());
-        max_y = std::max(max_y, v.y());
+    if (width == 0 || height == 0) {
+        log_warning("polygon has zero width or height, no SVG written");
+        return;
     }
-
-    double width  = max_x - min_x;
-    double height = max_y - min_y;
-
-    if (width == 0 || height == 0) return;
 
     // ---- compute scaling factor ----
     double scale_x = (canvas_size - 2*padding) / width;
     double scale_y = (canvas_size - 2*padding) / height;
     double scale = std::min(scale_x, scale_y);
 
-    // ---- helper lambda to scale coordinates ----
+    // map polygon coordinates to SVG coordinates (y axis points down in SVG)
     auto sx = [&](double x) { return (x - min_x) * scale + padding; };
-    auto sy = [&](double y) { return canvas_size - ((y - min_y) * scale + padding); }; // flip Y
+    auto sy = [&](double y) { return canvas_size - ((y - min_y) * scale + padding); };
 
     std::ofstream svg(filename);
     svg << "<svg xmlns='http://www.w3.org/2000/svg' width='" << canvas_size
@@ -231,12 +258,10 @@ void MedialAxisWithHoles::write_svg_with_holes(
         }
     }
 
-    // ---- draw medial axis edges ----
+    // ---- draw medial axis edges: straight lines in green, parabolas in blue ----
     for (size_t k = 0; k < edges.size(); ++k) {
-        int i1 = edges[k].first;
-        int i2 = edges[k].second;
-        const auto& p1 = vertices[i1];
-        const auto& p2 = vertices[i2];
+        const auto& p1 = nodes[edges[k].first];
+        const auto& p2 = nodes[edges[k].second];
 
         if (!is_curve[k]) {
             svg << "<line x1='" << sx(p1.x()) << "' y1='" << sy(p1.y())
@@ -254,165 +279,128 @@ void MedialAxisWithHoles::write_svg_with_holes(
         }
     }
 
-    // ---- draw medial axis vertices ----
-    for (const auto& v : vertices) {
+    // ---- draw medial axis nodes ----
+    for (const auto& v : nodes) {
         svg << "<circle cx='" << sx(v.x()) << "' cy='" << sy(v.y())
             << "' r='" << radius << "' fill='black' stroke='black' stroke-width='2'/>\n";
     }
 
     // ---- legend with graph size ----
-    std::size_t num_vertices = vertices.size();
-    std::size_t num_edges    = edges.size();
-
     double legend_x = 15;
     double legend_y = 25;
 
     svg << "<text x='" << legend_x
         << "' y='" << legend_y
         << "' font-family='Arial' font-size='14' fill='black'>"
-        << "Vertices: " << num_vertices
+        << "Nodes: " << nodes.size()
         << "</text>\n";
 
     svg << "<text x='" << legend_x
         << "' y='" << (legend_y + 18)
         << "' font-family='Arial' font-size='14' fill='black'>"
-        << "Edges: " << num_edges
+        << "Edges: " << edges.size()
         << "</text>\n";
 
-        svg << "<text x='" << legend_x
+    svg << "<text x='" << legend_x
         << "' y='" << (legend_y + 36)
         << "' font-family='Arial' font-size='14' fill='black'>"
         << "BBox Size: " << width << " x " << height
         << "</text>\n";
 
-        svg << "</svg>\n";
-        svg.close();
+    svg << "</svg>\n";
+    svg.close();
 
-        std::cout << "SVG written to " << filename << " (scaled to " << canvas_size << "x" << canvas_size << ")" << std::endl;
-    }
+    log_info("SVG written to " + filename);
+}
 
 
-void MedialAxisWithHoles::build_adjacency_list() 
+void MedialAxisGraph::build_adjacency_list()
 {
     adjacency_list.clear();
-    adjacency_list.resize(vertices.size());
+    adjacency_list.resize(nodes.size());
 
-    adjacency_list_edge_association.clear();
-    adjacency_list_edge_association.resize(vertices.size());
-
-    for (size_t k = 0; k < edges.size(); ++k) {
-        int i1 = edges[k].first;
-        int i2 = edges[k].second;
-
-        // Forward insertion: i1 -> i2
+    for (const auto& [i1, i2] : edges) {
+        // Insert each neighbour only once, even if there are parallel edges
         if (std::find(adjacency_list[i1].begin(), adjacency_list[i1].end(), i2) == adjacency_list[i1].end()) {
             adjacency_list[i1].push_back(i2);
-            adjacency_list_edge_association[i1].push_back(k);
         }
-
-        // Backward insertion: i2 -> i1
         if (std::find(adjacency_list[i2].begin(), adjacency_list[i2].end(), i1) == adjacency_list[i2].end()) {
             adjacency_list[i2].push_back(i1);
-            adjacency_list_edge_association[i2].push_back(k);
         }
-    }
-
-    // Optional: sanity check
-    for (size_t k = 0; k < edges.size(); ++k) {
-        int i1 = edges[k].first;
-        int i2 = edges[k].second;
-        assert(std::find(adjacency_list[i1].begin(), adjacency_list[i1].end(), i2) != adjacency_list[i1].end());
-        assert(std::find(adjacency_list[i2].begin(), adjacency_list[i2].end(), i1) != adjacency_list[i2].end());
     }
 }
 
 
 // Collect set of reflex vertices on polygon boundary and holes
-void MedialAxisWithHoles::collect_reflex_vertices(std::set<Point_2> &reflex) const 
+void MedialAxisGraph::collect_reflex_vertices(std::set<Point_2> &reflex, double tolerance_deg) const
 {
-    // outer
-    const Polygon& outer = polygon.outer_boundary();
-    int n = outer.size();
-
-    for (int i=0;i<n;++i)
-    {
-        const Point_2& prev = outer[(i-1+n)%n];
-        const Point_2& curr = outer[i];
-        const Point_2& next = outer[(i+1)%n];
-
-        if (is_reflex_vertex(prev,curr,next))
-            reflex.insert(curr);
-    }
-
-    // holes
-    for (auto hit = polygon.holes_begin();
-         hit != polygon.holes_end(); ++hit)
-    {
-        const Polygon& hole = *hit;
-        int m = hole.size();
-
-        for (int i=0;i<m;++i)
+    // Helper that adds the reflex (or nearly straight) vertices of one ring
+    auto collect_from_ring = [&](const Polygon &ring) {
+        size_t n = ring.size();
+        for (size_t i = 0; i < n; ++i)
         {
-            const Point_2& prev = hole[(i-1+m)%m];
-            const Point_2& curr = hole[i];
-            const Point_2& next = hole[(i+1)%m];
+            const Point_2& prev = ring[(i + n - 1) % n];
+            const Point_2& curr = ring[i];
+            const Point_2& next = ring[(i + 1) % n];
 
-            if (is_reflex_vertex(prev,curr,next))
+            if (is_reflex_or_nearly_straight(prev, curr, next, tolerance_deg))
                 reflex.insert(curr);
         }
-    }
+    };
+
+    // Holes are oriented clockwise, so the same right-turn test finds their reflex vertices
+    collect_from_ring(polygon.outer_boundary());
+    for (const auto &hole : polygon.holes())
+        collect_from_ring(hole);
 }
 
 
-// Build voronoi diagram of polygon with holes
-void MedialAxisWithHoles::initialize_voronoi() 
+// Each boundary edge is inserted as a segment site and each boundary vertex as a point site,
+// so the Voronoi diagram separates edges from their endpoints (needed for parabolic arcs).
+void MedialAxisGraph::insert_boundary_sites(SDG &sdg) const
 {
-    sdg.clear();
-    vd.clear();
-
-    // outer
-    for (int v = 0; v < polygon.outer_boundary().size(); ++v){
-        sdg.insert(polygon.outer_boundary().vertices()[v],
-                   polygon.outer_boundary().vertices()[(v + 1) % polygon.outer_boundary().size()]);
-        sdg.insert(polygon.outer_boundary().vertices()[v]);
-    }
-
-    // holes
-    for (int h = 0; h < polygon.number_of_holes(); ++h){
-        for (int w = 0; w < polygon.holes()[h].size(); ++w){
-            sdg.insert(polygon.holes()[h][w],
-                       polygon.holes()[h][(w + 1) % polygon.holes()[h].size()]);
-            sdg.insert(polygon.holes()[h][w]);
+    // Helper that inserts all edges and vertices of one ring
+    auto insert_ring = [&](const Polygon &ring) {
+        size_t n = ring.size();
+        for (size_t v = 0; v < n; ++v){
+            sdg.insert(ring[v], ring[(v + 1) % n]);
+            sdg.insert(ring[v]);
         }
-    }
-    vd = VD(sdg);
+    };
+
+    insert_ring(polygon.outer_boundary());
+    for (const auto &hole : polygon.holes())
+        insert_ring(hole);
 }
 
 
-// Build medial axis from Voronoi diagram by deleting edges to reflex vertices
-void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas) 
+// Build the medial axis graph from the Voronoi diagram: keep the finite Voronoi edges
+// that lie inside the polygon and do not end at a reflex (or nearly straight) polygon vertex
+void MedialAxisGraph::extract_medial_axis(VD const &vd, double reflex_tolerance_deg, bool keep_parabolas)
 {
-    vertices.clear();
+    nodes.clear();
     edges.clear();
+    is_curve.clear();
+    parabolas.clear();
 
+    // True if p lies strictly inside the outer boundary and outside all holes
     auto inside_domain = [&](const Point_2 &p){
         if (polygon.outer_boundary().bounded_side(p) != CGAL::ON_BOUNDED_SIDE)
             return false;
 
-        for (auto hit = polygon.holes_begin();
-            hit != polygon.holes_end(); ++hit){
-            if (hit->bounded_side(p) == CGAL::ON_BOUNDED_SIDE)
+        for (const auto &hole : polygon.holes()){
+            if (hole.bounded_side(p) == CGAL::ON_BOUNDED_SIDE)
                 return false;
         }
         return true;
     };
 
     std::set<Point_2> reflex;
-    collect_reflex_vertices(reflex);
+    collect_reflex_vertices(reflex, reflex_tolerance_deg);
 
-    std::map<Vertex_handle,int> index;
-    std::set<Vertex_handle> used;
-    std::vector<Halfedge_handle> medial_axis_edges;
+    std::set<Vertex_handle> used;                   // Voronoi vertices that become graph nodes
+    std::map<Vertex_handle,int> index;              // Voronoi vertex -> node index
+    std::vector<Halfedge_handle> medial_axis_edges; // selected Voronoi edges
 
     // select valid edges
     for (auto eit = vd.edges_begin();
@@ -420,6 +408,7 @@ void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas)
     {
         Halfedge_handle h = eit;
 
+        // skip infinite edges
         if (!h->has_source() || !h->has_target())
             continue;
 
@@ -439,16 +428,16 @@ void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas)
         medial_axis_edges.push_back(h);
     }
 
-    // build vertex array
+    // build node array
     for (auto vh : used) {
-        index[vh] = vertices.size();
-        vertices.push_back(vh->point());
+        index[vh] = nodes.size();
+        nodes.push_back(vh->point());
     }
 
     // build edges from the selected Voronoi edges only
     for (Halfedge_handle h : medial_axis_edges) {
 
-        // map vertex handles to compact indices
+        // map Voronoi vertex handles to compact node indices
         int i1 = index[h->source()];
         int i2 = index[h->target()];
 
@@ -463,22 +452,14 @@ void MedialAxisWithHoles::extract_medial_axis(bool use_parabolas)
             is_curve.push_back(false);
             parabolas.emplace_back(); // placeholder
         }
-        // Here we have an option to consider the edges as parabolas
         else if (CGAL::assign(par, dual_obj)) {
-            if (use_parabolas){
-                // parabola segment
-                edges.emplace_back(i1, i2);
-                is_curve.push_back(true);
-                parabolas.push_back(par);
-            } else {
-                // treat parabolas as straight parts as well
-                edges.emplace_back(i1, i2);
-                is_curve.push_back(false);
-                parabolas.emplace_back(); // placeholder
-            }
-        }          
+            // parabolic arc: always a straight edge in the graph, optionally drawn as a curve
+            edges.emplace_back(i1, i2);
+            is_curve.push_back(keep_parabolas);
+            parabolas.push_back(keep_parabolas ? par : Parabola_segment_2());
+        }
         else {
-            std::cout << "Warning: unknown Voronoi edge type" << std::endl;
+            log_warning("unknown Voronoi edge type, edge skipped");
         }
     }
 }

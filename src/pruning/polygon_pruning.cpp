@@ -10,22 +10,23 @@
 #include <random>
 
 
-bool check_validity_of_polygon(Polygon_with_holes const &polygon, std::string *reason)
+bool check_validity_of_polygon(Polygon_with_holes const &polygon, ValidityParams const &validity, std::string *reason)
 {
     // Store the problem in reason (if given) instead of printing it, since this check runs repeatedly
     auto report = [&](const std::string &message) {
         if (reason) *reason = message;
     };
 
-    constexpr double epsilon = 1e-4;
-    constexpr double angle_in_degree_for_colinearity = 2;
-    const double eps2 = epsilon * epsilon;
+    const double epsilon = validity.min_vertex_distance;
+    const double angle_in_degree_for_colinearity = validity.collinearity_threshold_deg;
+    const double eps2 = epsilon * epsilon;                  // squared minimum distance
 
     if (polygon.outer_boundary().size() < 3) {
         report("Outer boundary has less than 3 vertices!");
         return false;
     }
 
+    // Edge as an ordered pair of its endpoints, so that both directions compare equal
     auto norm = [](const Point_2& a, const Point_2& b) {
         return (a < b) ? std::make_pair(a,b)
                        : std::make_pair(b,a);
@@ -298,8 +299,8 @@ void normalize_polygon_orientation(Polygon_with_holes& pwh)
 }
 
 
-// Contract consecutive vertices that are epsilon-close and replace them by their mean point
-void contract_covertices_from_polygon(Polygon_with_holes &polygon, double distance_threshold)
+// Replace groups of consecutive vertices closer than distance_threshold ("covertices") by their mean point
+void merge_close_vertices(Polygon_with_holes &polygon, double distance_threshold)
 {
     // Helper to contract covertices of a given point vector
     auto contract_covertices = [&](std::vector<Point_2> const &input_vertices){
@@ -319,14 +320,14 @@ void contract_covertices_from_polygon(Polygon_with_holes &polygon, double distan
         }
 
         std::vector<Point_2> output_vertices;
-        std::vector<Point_2> copoints;
+        std::vector<Point_2> copoints;      // current group of close consecutive vertices
         auto n = poly_vertices.size();
     
-        for (int v = 0; v < n; ++v){
+        for (size_t v = 0; v < n; ++v){
             const Point_2& curr = poly_vertices[v];
             const Point_2& next = poly_vertices[(v + 1) % n];
 
-            // We collect copoints if the current has a follwoing covertex
+            // Collect the group while the next vertex is close to the current one
             if (squared_dist(curr, next) < distance_threshold*distance_threshold){
                 if (copoints.empty()){
                     copoints.push_back(curr);
@@ -343,7 +344,7 @@ void contract_covertices_from_polygon(Polygon_with_holes &polygon, double distan
 
             // If the next vertex is unique, but the current a copoint, 
             // we add the mean of previous copoints and clear
-            output_vertices.push_back(meanPoint(copoints));
+            output_vertices.push_back(mean_point(copoints));
             copoints.clear(); 
         }
         return output_vertices;
@@ -367,25 +368,25 @@ void contract_covertices_from_polygon(Polygon_with_holes &polygon, double distan
 }
 
 
-// Iteratively contract consecutive collinear vertices
-void prune_collinear_vertices_from_polygon(Polygon_with_holes &polygon, double degree_offset)
+// Iteratively remove nearly collinear vertices (never two adjacent ones in the same pass)
+void remove_nearly_collinear_vertices(Polygon_with_holes &polygon, double degree_offset)
 {
     // Helper to collect collinear points
     auto collect_collinear = [&](std::vector<Point_2> const &poly_vertices){
         auto n = poly_vertices.size();
         std::vector<bool> is_collinear(n, false);
 
-        for (int v = 0; v < n; ++v){
+        for (size_t v = 0; v < n; ++v){
             const Point_2& prev = poly_vertices[(v - 1 + n) % n];
             const Point_2& curr = poly_vertices[v];
             const Point_2& next = poly_vertices[(v + 1) % n];
 
             // Never remove two adjacent vertices in the same pass
-            if (is_collinear[(v - 1 + n) % n]){                
+            if (is_collinear[(v - 1 + n) % n]){
                 continue;
             }
             // The last vertex is also adjacent to the first one
-            if (v == static_cast<int>(n) - 1 and is_collinear[0]){
+            if (v == n - 1 and is_collinear[0]){
                 continue;
             }
             if (is_nearly_collinear_by_angle(prev, curr, next, degree_offset)){
@@ -402,12 +403,12 @@ void prune_collinear_vertices_from_polygon(Polygon_with_holes &polygon, double d
 
         // Collect uncontracted vertices
         std::vector<Point_2> new_vertices;
-        for (int v = 0; v < n; ++v) {
+        for (size_t v = 0; v < n; ++v) {
             if (not is_collinear[v]) {
                 new_vertices.push_back(poly.vertices()[v]);
             }
         }
-        // If no vertices where contracted return false
+        // If no vertices were removed return false
         if (new_vertices.size() == n){
             return false;
         }
@@ -432,25 +433,26 @@ void prune_collinear_vertices_from_polygon(Polygon_with_holes &polygon, double d
 }
 
 
-// If boundary and hole share a point, we move the hole point away from the 
-// boundary by some epsilon along the angle bisector of the hole corner
-void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
+// If the outer boundary and a hole share a vertex, move the hole vertex away from the
+// outer boundary by some epsilon along the angle bisector of the hole corner
+void move_hole_vertices_off_outer_boundary(Polygon_with_holes &polygon, double offset, ValidityParams const &validity)
 {
     if (not polygon.has_holes()){
         return;
     }
 
+    // A vertex shared by the outer boundary and a hole, given by its index in each ring
     struct IntersectionPoint {
-            int boundary_point;
-            int hole_point;
-        };
+        int boundary_point;     // index in the outer boundary
+        int hole_point;         // index in the hole
+    };
 
     // Helper to find intersection points if they exist
     auto collect_hole_boundary_intersection = [&](Polygon const &hole){       
         
         std::vector<IntersectionPoint> intersections;
-        for (int v = 0; v < polygon.outer_boundary().size(); ++v){
-            for (int w = 0; w < hole.size(); ++w){
+        for (int v = 0; v < static_cast<int>(polygon.outer_boundary().size()); ++v){
+            for (int w = 0; w < static_cast<int>(hole.size()); ++w){
                 //TODO: maybe make this more numerically robust
                 if (polygon.outer_boundary().vertices()[v] == hole.vertices()[w]){
                     intersections.push_back({v, w});
@@ -497,7 +499,7 @@ void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
         return curr + epsilon * bis;
     };
 
-    // Helper that returns point that is curr moved by epsilon towrds outer
+    // Helper that returns curr moved by epsilon towards outer
     auto epsilon_towards_outer = [](Point_2 const &curr, Point_2 const &outer, double epsilon){
         Vector_2 dir = outer - curr;
 
@@ -510,7 +512,7 @@ void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
         return curr + epsilon * dir;
     };
 
-    // Helper that moved point of hole (given by idx) to new_point
+    // Helper that moves the hole vertex with index point_idx to new_point
     auto move_hole_point = [](Polygon &hole, int point_idx, Point_2 new_point){
         auto it = hole.vertices_begin();
         std::advance(it, point_idx);
@@ -526,7 +528,7 @@ void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
         auto outer = polygon.outer_boundary().vertex(intersection.boundary_point);
 
         // Move point 
-        double epsilon = 0.01;
+        double epsilon = offset;
         auto new_point = epsilon_along_angle_bisector(prev, curr, next, outer, epsilon);
         move_hole_point(hole, intersection.hole_point, new_point);
 
@@ -534,7 +536,7 @@ void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
         const int max_halvings = 60;
         int halvings = 0;
         std::string reason;
-        while (not check_validity_of_polygon(polygon, &reason)) {
+        while (not check_validity_of_polygon(polygon, validity, &reason)) {
             if (++halvings > max_halvings) {
                 throw InvalidPolygonError("could not move hole vertex off the outer boundary (" + reason + ")");
             }
@@ -554,22 +556,22 @@ void prune_hole_boundary_intersections(Polygon_with_holes &polygon)
 }
 
 
-void prune_polygon(Polygon_with_holes &polygon, PolygonPruningConfig const &config)
+void prune_polygon(Polygon_with_holes &polygon, PolygonPruningParams const &pruning, ValidityParams const &validity)
 {
-    prune_collinear_vertices_from_polygon(polygon, config.collinearity_threshold);
-    auto dist_threshold = std::min(epsilon_fraction_of_bbox_diag(polygon, config.bbox_relative_covertex_threshold), 
-                                   config.absolute_covertex_threshold);
-    contract_covertices_from_polygon(polygon, dist_threshold);    
-    prune_collinear_vertices_from_polygon(polygon, config.collinearity_threshold);
+    remove_nearly_collinear_vertices(polygon, pruning.collinearity_threshold_deg);
+    auto dist_threshold = std::min(epsilon_fraction_of_bbox_diag(polygon, pruning.merge_distance_rel_bbox),
+                                   pruning.merge_distance);
+    merge_close_vertices(polygon, dist_threshold);
+    remove_nearly_collinear_vertices(polygon, pruning.collinearity_threshold_deg);
 
-    prune_hole_boundary_intersections(polygon);
+    move_hole_vertices_off_outer_boundary(polygon, pruning.hole_vertex_offset, validity);
 }
 
 
 // Perturb all polygon vertices by an epsilon relative to bbox diagonal
 void perturb_polygon(Polygon_with_holes &polygon, double relative_eps, unsigned seed)
 {
-   double eps = epsilon_fraction_of_bbox_diag(polygon, relative_eps);
+    double eps = epsilon_fraction_of_bbox_diag(polygon, relative_eps);
     
     std::mt19937 gen(seed);
     std::uniform_real_distribution<double> dist(-eps, eps);

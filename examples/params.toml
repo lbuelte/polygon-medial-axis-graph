@@ -1,0 +1,12 @@
+# Example parameter file: only the values that differ from the defaults are needed.
+# Print all parameters with their defaults and descriptions with
+#   ./build/medial_axis_graph --print-default-params
+#
+# Use it with
+#   ./build/medial_axis_graph --input examples/data --output output/examples --params examples/params.toml
+
+[polygon_pruning]
+merge_distance = 0.05            # merge consecutive vertices closer than 5 cm (default: 1 cm)
+
+[perturbation]
+seed = 7

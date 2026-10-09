@@ -1,24 +1,21 @@
-#ifndef MEDIALAXISWITHHOLES_LOGGER_H
-#define MEDIALAXISWITHHOLES_LOGGER_H
+// Logging to stderr in one format:  [<context>] WARNING: <message>
+// The context names what is being processed, e.g. "Kessenich|3446 id=3446" (dataset|index id),
+// so messages from deep inside the pipeline can be traced back to their instance.
 
-#include <fstream>
-#include <filesystem>
+#ifndef MEDIAL_AXIS_GRAPH_LOGGER_H
+#define MEDIAL_AXIS_GRAPH_LOGGER_H
 
-// Functions to initialize and close the global logger global_log
-void init_global_log(const std::string &filename);
-void close_global_log();
+#include <string>
 
-
-// Set LogContext to log instance specific errors in pruning
-struct LogContext {
-    std::string dataset;
-    int instance_id = -1;
-};
-void set_log_context(const std::string& dataset, int instance_id);
+// Context shown in front of every message; empty context: no prefix
+void set_log_context(const std::string &context);
 void clear_log_context();
 
+// Info messages are only printed if verbose output is enabled (--verbose)
+void set_verbose(bool verbose);
 
-void log_error(std::ostream &stream, const std::string& message);
-void log_warning(std::ostream &stream, const std::string& message);
+void log_info(const std::string &message);
+void log_warning(const std::string &message);
+void log_error(const std::string &message);
 
-#endif // MEDIALAXISWITHHOLES_LOGGER_H
+#endif // MEDIAL_AXIS_GRAPH_LOGGER_H
