@@ -79,3 +79,4 @@ output/
 *.svg
 
 CLAUDE.md
+!docs/*.svg

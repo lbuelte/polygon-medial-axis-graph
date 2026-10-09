@@ -1,0 +1,284 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1000' height='1000' viewBox='0 0 1000 1000'>
+<rect x='0' y='0' width='1000' height='1000' style='fill:white'/>
+<polygon points='242.523,436.239 248.733,439.808 135.63,648.252 85.5686,619.367 10,756.251 124.162,826.871 127.6,820.47 129.515,814.355 201.075,699.456 363.966,794.309 380.467,788.789 480.745,851.592 433.479,927.018 536.267,990 580.214,920.963 626.636,950.514 625.636,953.846 641.959,965.005 667.87,927.125 708.914,951.442 819.995,791.668 776.916,761.712 782.603,754.681 789.182,757.774 804.053,736.396 797.034,731.518 990,453.811 770.266,319.793 644.612,255.61 653.546,238.121 618.379,220.157 613.335,230.02 531.366,180.517 528.963,183.515 426.436,115.917 311.608,327.466 305.457,323.993 ' style='fill:lightgray;stroke:lightgray;stroke-width:2'/>
+<polygon points='418.037,711.246 422.986,700.372 416.086,694.923 509.702,528.951 679.481,624.744 558.288,800.008 555.98,774.799 499.756,742.487 485.468,745.485 469.681,736.753 467.171,740.916 ' style='fill:white;stroke:lightgray;stroke-width:2'/>
+<polygon points='365.643,545.916 342.111,532.639 361.824,497.698 415.61,528.035 382.513,586.722 352.259,569.65 ' style='fill:white;stroke:lightgray;stroke-width:2'/>
+<circle cx='242.523' cy='436.239' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='248.733' cy='439.808' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='135.63' cy='648.252' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='85.5686' cy='619.367' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='10' cy='756.251' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='124.162' cy='826.871' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='127.6' cy='820.47' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='129.515' cy='814.355' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='201.075' cy='699.456' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='363.966' cy='794.309' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='380.467' cy='788.789' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='480.745' cy='851.592' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='433.479' cy='927.018' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='536.267' cy='990' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='580.214' cy='920.963' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='626.636' cy='950.514' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='625.636' cy='953.846' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='641.959' cy='965.005' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='667.87' cy='927.125' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='708.914' cy='951.442' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='819.995' cy='791.668' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='776.916' cy='761.712' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='782.603' cy='754.681' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='789.182' cy='757.774' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='804.053' cy='736.396' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='797.034' cy='731.518' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='990' cy='453.811' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='770.266' cy='319.793' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='644.612' cy='255.61' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='653.546' cy='238.121' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='618.379' cy='220.157' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='613.335' cy='230.02' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='531.366' cy='180.517' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='528.963' cy='183.515' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='426.436' cy='115.917' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='311.608' cy='327.466' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='305.457' cy='323.993' r='2' fill='red' stroke='black' stroke-width='1'/>
+<circle cx='418.037' cy='711.246' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='422.986' cy='700.372' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='416.086' cy='694.923' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='509.702' cy='528.951' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='679.481' cy='624.744' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='558.288' cy='800.008' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='555.98' cy='774.799' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='499.756' cy='742.487' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='485.468' cy='745.485' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='469.681' cy='736.753' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='467.171' cy='740.916' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='365.643' cy='545.916' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='342.111' cy='532.639' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='361.824' cy='497.698' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='415.61' cy='528.035' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='382.513' cy='586.722' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<circle cx='352.259' cy='569.65' r='2' fill='orange' stroke='black' stroke-width='1'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='165.605,677.366 165.604,677.367 162.755,680.816 159.705,684.139 156.452,687.337 152.997,690.408 149.34,693.354 145.482,696.174 141.421,698.869 137.158,701.437 132.694,703.88 128.027,706.197 123.158,708.388 118.088,710.454 112.815,712.394 112.28,712.58 '/>
+<line x1='172.662' y1='668.346' x2='165.605' y2='677.366' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='792.158,738.534 792.14,738.537 790.056,738.825 787.777,738.976 785.302,738.992 783.079,738.901 '/>
+<line x1='723.199' y1='701.595' x2='783.079' y2='738.901' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='786.266,746.89 785.979,745.894 785.26,743.803 784.345,741.576 783.235,739.214 783.079,738.901 '/>
+<line x1='100.574' y1='732.525' x2='10' y2='756.251' style='stroke:green;stroke-width:2'/>
+<line x1='85.5686' y1='619.367' x2='107.286' y2='697.376' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='107.286,697.376 108.324,700.947 109.969,706.09 111.822,711.349 112.28,712.58 '/>
+<line x1='121.791' y1='818.026' x2='124.162' y2='826.871' style='stroke:green;stroke-width:2'/>
+<line x1='368.272' y1='752.337' x2='363.966' y2='794.309' style='stroke:green;stroke-width:2'/>
+<line x1='127.6' y1='820.47' x2='121.791' y2='818.026' style='stroke:green;stroke-width:2'/>
+<line x1='119.222' y1='811.131' x2='121.791' y2='818.026' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='119.222,811.131 119.096,810.788 118.388,808.531 118.055,807.218 '/>
+<line x1='100.574' y1='732.525' x2='118.055' y2='807.218' style='stroke:green;stroke-width:2'/>
+<line x1='112.28' y1='712.58' x2='100.574' y2='732.525' style='stroke:green;stroke-width:2'/>
+<line x1='403.633' y1='704.69' x2='351.967' y2='710.866' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='351.967,710.866 349.231,707.094 346.025,702.336 342.939,697.373 339.972,692.204 337.125,686.829 334.398,681.248 331.791,675.462 329.303,669.471 327.101,663.726 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='370.547,736.11 370.122,735.663 366.706,731.885 363.411,727.9 360.234,723.71 357.178,719.315 354.241,714.714 351.967,710.866 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='755.085,490.747 759.57,493.43 766.813,497.987 770.163,500.192 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='744.239,669.523 747.532,664.576 750.731,659.345 753.736,653.979 756.544,648.477 759.158,642.84 761.576,637.067 763.799,631.157 765.826,625.113 767.658,618.932 769.294,612.615 770.736,606.163 771.981,599.575 773.032,592.851 773.886,585.992 774.546,578.997 775.01,571.866 775.279,564.599 775.352,557.196 775.23,549.658 774.913,541.984 774.4,534.174 773.692,526.228 772.788,518.146 771.689,509.929 770.394,501.576 770.163,500.192 '/>
+<line x1='990' y1='453.811' x2='770.163' y2='500.192' style='stroke:green;stroke-width:2'/>
+<line x1='265.297' y1='620.361' x2='243.591' y2='626.443' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='172.662,668.346 175.16,665.3 178.207,661.929 181.463,658.672 184.928,655.529 188.603,652.499 192.486,649.583 196.579,646.78 200.88,644.09 205.391,641.514 210.111,639.051 215.04,636.702 220.179,634.467 225.526,632.345 231.083,630.336 236.848,628.441 242.823,626.659 243.591,626.443 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='368.272,752.337 368.568,749.639 369.139,745.153 369.83,740.461 370.547,736.11 '/>
+<line x1='467.753' y1='777.513' x2='465.325' y2='787.237' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='444.788,777.982 448.1,779.919 452.136,782.026 456.299,783.931 460.588,785.635 465.003,787.137 465.325,787.237 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='465.325,787.237 469.138,789.229 473.429,791.214 477.845,792.998 482.388,794.579 487.057,795.96 490.719,796.88 '/>
+<line x1='694.021' y1='882.985' x2='708.914' y2='951.442' style='stroke:green;stroke-width:2'/>
+<line x1='517.172' y1='907.366' x2='536.267' y2='990' style='stroke:green;stroke-width:2'/>
+<line x1='529.125' y1='888.441' x2='517.172' y2='907.366' style='stroke:green;stroke-width:2'/>
+<line x1='433.479' y1='927.018' x2='517.172' y2='907.366' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='529.125,888.441 531.848,884.318 532.187,883.829 '/>
+<line x1='638.725' y1='947.779' x2='641.959' y2='965.005' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='638.725,947.779 639.061,945.528 639.237,942.952 639.218,940.241 639.002,937.396 638.589,934.417 638.203,932.344 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='631.192,951.881 632.516,951.354 634.122,950.578 635.862,949.606 637.736,948.438 638.725,947.779 '/>
+<line x1='545.46' y1='864.798' x2='532.187' y2='883.829' style='stroke:green;stroke-width:2'/>
+<line x1='631.192' y1='951.881' x2='625.636' y2='953.846' style='stroke:green;stroke-width:2'/>
+<line x1='632.128' y1='902.676' x2='638.203' y2='932.344' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='694.021,882.985 693.128,879.118 691.825,874.115 690.327,868.975 688.634,863.7 686.745,858.289 684.661,852.742 682.381,847.059 679.906,841.24 677.236,835.286 674.37,829.195 671.309,822.969 670.847,822.051 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='632.128,902.676 631.871,901.386 631.061,896.78 630.378,891.974 629.824,886.967 629.397,881.76 629.098,876.351 628.927,870.742 628.884,864.933 628.968,858.922 629.181,852.711 629.333,849.555 '/>
+<line x1='746.957' y1='804.795' x2='819.995' y2='791.668' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='746.957,804.795 746.224,804.925 741.179,805.72 735.939,806.381 730.503,806.905 724.872,807.293 719.046,807.546 713.024,807.663 706.806,807.643 700.394,807.489 693.786,807.198 686.983,806.771 681.726,806.36 '/>
+<line x1='545.46' y1='864.798' x2='507.867' y2='808.287' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='507.867,808.287 506.674,806.456 '/>
+<line x1='732.398' y1='686.605' x2='744.239' y2='669.523' style='stroke:green;stroke-width:2'/>
+<line x1='786.266' y1='746.89' x2='789.182' y2='757.774' style='stroke:green;stroke-width:2'/>
+<line x1='493.332' y1='782.964' x2='499.756' y2='742.487' style='stroke:green;stroke-width:2'/>
+<line x1='792.158' y1='738.534' x2='804.053' y2='736.396' style='stroke:green;stroke-width:2'/>
+<line x1='627.124' y1='246.676' x2='653.546' y2='238.121' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='493.332,782.964 493.171,783.962 492.415,788.33 491.54,792.904 490.719,796.88 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='723.199,701.595 725.726,697.091 728.913,691.854 732.296,686.752 732.398,686.605 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='720.812,704.704 720.921,704.558 723.199,701.595 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='627.124,246.676 625.305,247.298 '/>
+<line x1='715.389' y1='711.949' x2='720.812' y2='704.704' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='539.75,351.865 535.752,356.767 530.385,363.394 527.043,367.546 '/>
+<line x1='625.305' y1='247.298' x2='539.75' y2='351.865' style='stroke:green;stroke-width:2'/>
+<line x1='694.527' y1='455.209' x2='770.266' y2='319.793' style='stroke:green;stroke-width:2'/>
+<line x1='623.202' y1='235.066' x2='618.379' y2='220.157' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='623.202,235.066 623.323,235.448 623.957,237.776 624.483,240.316 624.901,243.067 625.21,246.031 625.305,247.298 '/>
+<line x1='532.387' y1='186.259' x2='531.366' y2='180.517' style='stroke:green;stroke-width:2'/>
+<line x1='694.527' y1='455.209' x2='584.621' y2='396.167' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='575.276,391.352 579.025,393.235 584.621,396.167 '/>
+<line x1='466.917' y1='277.621' x2='426.436' y2='115.917' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='466.917,277.621 467.251,278.942 469.173,286.125 471.305,293.421 473.645,300.831 476.194,308.354 478.953,315.99 481.92,323.74 482.505,325.22 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='532.387,186.259 532.484,186.891 532.622,188.504 532.638,190.32 532.53,192.34 532.3,194.563 531.946,196.99 531.469,199.621 530.87,202.455 530.147,205.493 529.301,208.735 528.333,212.18 527.241,215.829 526.026,219.682 524.689,223.739 523.228,227.999 521.644,232.462 519.937,237.13 518.108,242.001 516.155,247.076 514.079,252.354 511.881,257.837 509.559,263.522 507.114,269.412 504.547,275.505 501.856,281.802 499.042,288.303 496.105,295.007 493.046,301.915 489.863,309.026 486.557,316.342 483.128,323.861 482.505,325.22 '/>
+<line x1='491.302' y1='357.622' x2='482.505' y2='325.22' style='stroke:green;stroke-width:2'/>
+<line x1='468.753' y1='373.973' x2='424.42' y2='386.719' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='422.045,387.411 424.42,386.719 '/>
+<line x1='463.487' y1='443.152' x2='462.908' y2='502.557' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='451.498,548.274 453.569,544.362 455.433,540.329 457.09,536.18 458.541,531.915 459.783,527.532 460.819,523.032 461.647,518.415 462.268,513.682 462.682,508.832 462.889,503.864 462.908,502.557 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='681.726,806.36 682.272,800.644 683.117,793.773 684.159,787.037 685.396,780.437 686.829,773.973 688.457,767.643 690.282,761.449 692.302,755.391 694.517,749.467 696.928,743.679 699.536,738.026 702.338,732.509 705.337,727.127 708.531,721.88 711.921,716.769 715.389,711.949 '/>
+<line x1='308.145' y1='333.598' x2='305.457' y2='323.993' style='stroke:green;stroke-width:2'/>
+<line x1='252.34' y1='433.532' x2='242.523' y2='436.239' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='252.34,433.532 253.176,433.319 255.163,432.937 257.358,432.671 259.761,432.521 262.371,432.488 265.189,432.571 268.214,432.771 271.446,433.087 274.887,433.519 278.534,434.068 282.39,434.733 286.453,435.514 290.723,436.412 295.201,437.426 299.886,438.556 304.779,439.803 309.88,441.166 315.188,442.645 318.2,443.51 '/>
+<line x1='670.847' y1='822.051' x2='681.726' y2='806.36' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='308.145,333.598 308.459,334.619 309.174,336.506 310.096,338.509 311.226,340.629 312.564,342.866 314.109,345.218 315.862,347.687 317.822,350.273 319.99,352.974 322.365,355.792 324.948,358.727 327.738,361.778 330.736,364.945 333.942,368.228 337.355,371.628 340.975,375.145 344.804,378.777 348.839,382.526 353.082,386.392 357.533,390.373 362.191,394.471 367.057,398.686 371.36,402.363 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='463.487,443.152 463.6,436.692 463.834,429.585 464.185,422.271 464.653,414.749 465.238,407.02 465.939,399.084 466.758,390.941 467.693,382.59 468.745,374.033 468.753,373.973 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='468.753,373.973 471.861,371.559 478.928,366.271 486.203,361.097 491.302,357.622 '/>
+<line x1='395.671' y1='748.283' x2='370.547' y2='736.11' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='629.604,849.322 630.615,848.456 635.619,844.358 640.818,840.395 646.213,836.567 651.804,832.875 657.59,829.318 663.572,825.896 669.75,822.609 670.847,822.051 '/>
+<line x1='409.134' y1='703.727' x2='422.986' y2='700.372' style='stroke:green;stroke-width:2'/>
+<line x1='629.333' y1='849.555' x2='629.604' y2='849.322' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='409.134,703.727 408.318,703.915 405.887,704.375 403.633,704.69 '/>
+<line x1='755.085' y1='490.747' x2='694.527' y2='455.209' style='stroke:green;stroke-width:2'/>
+<line x1='527.043' y1='367.546' x2='575.276' y2='391.352' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='527.043,367.546 526.993,367.529 518.602,364.825 510.088,362.323 501.451,360.026 492.691,357.932 491.302,357.622 '/>
+<line x1='304.525' y1='470.081' x2='287.087' y2='501.595' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='270.238,572.242 270.264,568.511 270.474,562.387 270.893,556.376 271.521,550.479 272.358,544.695 273.404,539.025 274.66,533.468 276.125,528.025 277.799,522.695 279.682,517.478 281.774,512.375 284.075,507.386 286.585,502.51 287.087,501.595 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='341.942,658.62 336.891,660.247 330.748,662.381 327.101,663.726 '/>
+<line x1='348.252' y1='656.662' x2='341.942' y2='658.62' style='stroke:green;stroke-width:2'/>
+<line x1='509.741' y1='804.453' x2='555.98' y2='774.799' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='509.741,804.453 509.6,804.543 506.674,806.456 '/>
+<line x1='490.719' y1='796.88' x2='506.674' y2='806.456' style='stroke:green;stroke-width:2'/>
+<line x1='625.166' y1='850.349' x2='545.46' y2='864.798' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='625.166,850.349 629.333,849.555 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='304.525,470.081 306.453,466.459 '/>
+<line x1='318.2' y1='443.51' x2='306.453' y2='466.459' style='stroke:green;stroke-width:2'/>
+<line x1='471.493' y1='743.522' x2='469.681' y2='736.753' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='471.493,743.522 471.611,743.995 471.919,745.661 472.111,747.535 472.188,749.617 472.15,751.907 471.997,754.405 471.729,757.112 471.345,760.027 470.846,763.15 470.232,766.481 469.503,770.02 468.659,773.768 467.753,777.513 '/>
+<line x1='418.399' y1='606.96' x2='451.498' y2='548.274' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='395.671,748.283 398.714,749.832 402.643,752.065 403.239,752.429 '/>
+<line x1='444.788' y1='777.982' x2='403.239' y2='752.429' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='418.399,606.96 418.398,606.963 416.119,610.761 413.633,614.442 410.939,618.007 408.039,621.454 404.931,624.785 401.616,627.998 398.093,631.095 394.364,634.075 390.427,636.938 386.283,639.684 381.931,642.314 377.373,644.826 372.607,647.222 367.634,649.5 362.453,651.662 357.066,653.707 351.471,655.635 348.252,656.662 '/>
+<line x1='305.999' y1='651.628' x2='327.101' y2='663.726' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='305.999,651.628 304.894,650.99 299.171,647.519 293.567,643.843 288.082,639.961 282.718,635.874 277.473,631.581 272.348,627.082 267.343,622.378 265.297,620.361 '/>
+<line x1='328.832' y1='556.176' x2='365.643' y2='545.916' style='stroke:green;stroke-width:2'/>
+<line x1='371.36' y1='402.363' x2='422.045' y2='387.411' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='318.2,443.51 319.74,441.72 323.644,437.433 327.756,433.262 332.075,429.207 336.602,425.269 341.336,421.447 346.278,417.741 351.427,414.152 356.784,410.679 362.349,407.323 368.121,404.083 371.36,402.363 '/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='270.238,572.242 270.042,573.078 268.734,579.23 267.635,585.497 266.745,591.877 266.064,598.37 265.592,604.977 265.33,611.697 265.276,618.531 265.297,620.361 '/>
+<line x1='328.519' y1='556.262' x2='270.238' y2='572.242' style='stroke:green;stroke-width:2'/>
+<polyline fill='none' stroke='blue' stroke-width='2' points='328.832,556.176 328.519,556.262 '/>
+<circle cx='165.605' cy='677.366' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='783.079' cy='738.901' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='10' cy='756.251' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='107.286' cy='697.376' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='85.5686' cy='619.367' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='124.162' cy='826.871' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='363.966' cy='794.309' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='121.791' cy='818.026' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='119.222' cy='811.131' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='118.055' cy='807.218' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='100.574' cy='732.525' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='127.6' cy='820.47' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='112.28' cy='712.58' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='351.967' cy='710.866' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='770.163' cy='500.192' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='243.591' cy='626.443' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='368.272' cy='752.337' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='172.662' cy='668.346' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='465.325' cy='787.237' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='708.914' cy='951.442' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='536.267' cy='990' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='517.172' cy='907.366' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='529.125' cy='888.441' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='641.959' cy='965.005' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='433.479' cy='927.018' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='638.725' cy='947.779' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='532.187' cy='883.829' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='625.636' cy='953.846' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='631.192' cy='951.881' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='638.203' cy='932.344' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='694.021' cy='882.985' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='632.128' cy='902.676' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='819.995' cy='791.668' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='746.957' cy='804.795' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='507.867' cy='808.287' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='744.239' cy='669.523' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='789.182' cy='757.774' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='786.266' cy='746.89' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='499.756' cy='742.487' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='990' cy='453.811' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='804.053' cy='736.396' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='792.158' cy='738.534' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='653.546' cy='238.121' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='493.332' cy='782.964' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='732.398' cy='686.605' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='723.199' cy='701.595' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='627.124' cy='246.676' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='720.812' cy='704.704' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='539.75' cy='351.865' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='770.266' cy='319.793' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='618.379' cy='220.157' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='623.202' cy='235.066' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='531.366' cy='180.517' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='584.621' cy='396.167' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='625.305' cy='247.298' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='426.436' cy='115.917' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='466.917' cy='277.621' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='532.387' cy='186.259' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='482.505' cy='325.22' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='424.42' cy='386.719' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='462.908' cy='502.557' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='715.389' cy='711.949' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='305.457' cy='323.993' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='242.523' cy='436.239' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='252.34' cy='433.532' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='681.726' cy='806.36' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='308.145' cy='333.598' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='468.753' cy='373.973' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='370.547' cy='736.11' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='670.847' cy='822.051' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='422.986' cy='700.372' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='629.604' cy='849.322' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='409.134' cy='703.727' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='694.527' cy='455.209' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='403.633' cy='704.69' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='755.085' cy='490.747' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='575.276' cy='391.352' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='527.043' cy='367.546' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='491.302' cy='357.622' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='287.087' cy='501.595' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='341.942' cy='658.62' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='555.98' cy='774.799' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='509.741' cy='804.453' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='506.674' cy='806.456' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='545.46' cy='864.798' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='625.166' cy='850.349' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='629.333' cy='849.555' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='304.525' cy='470.081' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='490.719' cy='796.88' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='306.453' cy='466.459' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='463.487' cy='443.152' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='469.681' cy='736.753' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='467.753' cy='777.513' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='451.498' cy='548.274' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='471.493' cy='743.522' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='395.671' cy='748.283' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='403.239' cy='752.429' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='444.788' cy='777.982' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='418.399' cy='606.96' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='327.101' cy='663.726' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='305.999' cy='651.628' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='365.643' cy='545.916' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='422.045' cy='387.411' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='371.36' cy='402.363' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='318.2' cy='443.51' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='348.252' cy='656.662' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='270.238' cy='572.242' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='265.297' cy='620.361' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='328.832' cy='556.176' r='2' fill='black' stroke='black' stroke-width='2'/>
+<circle cx='328.519' cy='556.262' r='2' fill='black' stroke='black' stroke-width='2'/>
+<text x='15' y='25' font-family='Arial' font-size='14' fill='black'>Nodes: 110</text>
+<text x='15' y='43' font-family='Arial' font-size='14' fill='black'>Edges: 111</text>
+<text x='15' y='61' font-family='Arial' font-size='14' fill='black'>BBox Size: 82.375 x 73.472</text>
+</svg>
