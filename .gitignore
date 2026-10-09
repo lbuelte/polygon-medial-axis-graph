@@ -67,9 +67,10 @@ vcpkg_installed/
 Testing/
 .cache/
 
-# IDEs
+# IDEs and AI
 .vscode/
 .idea/
+.claude/
 
 # Data and results (only the small example inputs are committed)
 input/
@@ -77,6 +78,7 @@ output/
 *.gpkg
 !examples/data/*/*.gpkg
 *.svg
+!docs/*.svg
 
 CLAUDE.md
-!docs/*.svg
+

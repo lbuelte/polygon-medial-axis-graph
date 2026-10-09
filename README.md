@@ -4,8 +4,6 @@ Computes **medial axis graphs** of polygons with holes, such as building footpri
 
 This code is the preprocessing step of [geomGMD](https://github.com/lbuelte/geomGMD), a similarity measure for polygons based on their medial axis graphs. You don't need geomGMD to use it.
 
-> 🚧 Code release in preparation. The license is not decided yet (see [License](#license)).
-
 ![Medial axis graph of a building with two courtyards](docs/example_medial_axis_graph.svg)
 
 *Medial axis graph (black nodes, green/blue edges) of an OpenStreetMap building with two courtyards. Red and orange dots are the vertices of the outer boundary and of the holes.*
@@ -246,22 +244,30 @@ external/    vendored header-only libraries (nlohmann/json, toml++)
 
 If you use this code, please cite:
 
+> Laura Bülte, Alexander Naumann, Johanna Schlurmann, Jan-Henrik Haunert, and Petra Mutzel. 2026. geomGMD: Translation- and Rotation-Invariant Geometric Graph Mapping Distance for Building Footprint Similarity. In *The 34th ACM International Conference on Advances in Geographic Information Systems (SIGSPATIAL '26)*, November 03–06, 2026, Riverside, CA, USA. ACM, New York, NY, USA, 13 pages. https://doi.org/10.1145/3841645.3844193
+
 ```bibtex
 @inproceedings{buelte2026geomgmd,
-  author    = {B{\"u}lte, Laura and Naumann, A. and Schlurmann, J. and Haunert, Jan-Henrik and Mutzel, Petra},
-  title     = {TBD},
-  booktitle = {Proceedings of the 34th ACM SIGSPATIAL International Conference on Advances in Geographic Information Systems (SIGSPATIAL '26)},
+  author    = {B{\"u}lte, Laura and Naumann, Alexander and Schlurmann, Johanna and Haunert, Jan-Henrik and Mutzel, Petra},
+  title     = {{geomGMD}: Translation- and Rotation-Invariant Geometric Graph Mapping Distance for Building Footprint Similarity},
+  booktitle = {The 34th ACM International Conference on Advances in Geographic Information Systems (SIGSPATIAL '26)},
   year      = {2026},
-  address   = {Riverside, CA, USA}
+  month     = nov,
+  address   = {Riverside, CA, USA},
+  publisher = {ACM},
+  numpages  = {13},
+  doi       = {10.1145/3841645.3844193}
 }
 ```
 
 ## License
 
-The license of this code will be added with the public code release.
+The code in this repository is licensed under the [MIT License](LICENSE).
+
+Note that it uses CGAL packages licensed under GPL-3.0-or-later (see below). Executables built from this code include these packages and are therefore subject to the GPL when distributed.
 
 Third-party components:
 
-- CGAL: GPL-3.0-or-later / LGPL-3.0-or-later, depending on the package. The segment Delaunay graph and Voronoi diagram packages used here are GPL.
+- CGAL: GPL-3.0-or-later / LGPL-3.0-or-later, depending on the package. The segment Delaunay graph and Voronoi diagram packages used here are GPL-3.0-or-later.
 - nlohmann/json and toml++: MIT (license files in `external/`).
 - The example data in `examples/data/osm_poppelsdorf/` is © [OpenStreetMap](https://www.openstreetmap.org/copyright) contributors and available under the [Open Database License (ODbL)](https://opendatacommons.org/licenses/odbl/).
